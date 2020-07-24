@@ -1,0 +1,253 @@
+{
+  "name": "LogRegistersMeter",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "plantNo": {
+      "type": "string",
+      "required": true,
+      "description": "Point 33",
+      "index": true
+    },
+    "currentPhaseA": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 00",
+      "required": false
+    },
+    "currentPhaseB": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 01",
+      "required": false
+    },
+    "currentPhaseC": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 02",
+      "required": false
+    },
+    "currentPhaseN": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 03",
+      "required": false
+    },
+    "voltagePhaseA": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 04",
+      "required": false
+    },
+    "voltagePhaseB": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 05",
+      "required": false
+    },
+    "voltagePhaseC": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 06",
+      "required": false
+    },
+    "P_SUM": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 07",
+      "required": false
+    },
+    "Q_SUM": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 08",
+      "required": false
+    },
+    "PF_AVG": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 09",
+      "required": false
+    },
+    "frequency": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 10",
+      "required": false
+    },
+    "total_kWh": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 11",
+      "required": false
+    },
+    "irradiance": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 12",
+      "required": false
+    },
+    "wind_speed": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 13",
+      "required": false
+    },
+    "PF_setting": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 14",
+      "required": false
+    },
+    "P_setting": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 15",
+      "required": false
+    },
+    "Q_setting": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 16",
+      "required": false
+    },
+    "vpset_setting": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 17",
+      "required": false
+    },
+    "control_result_01_25": {
+      "type": "number",
+      "dataType": "int",
+      "description": "Point 18",
+      "required": false
+    },
+    "control_result_26_50": {
+      "type": "number",
+      "dataType": "int",
+      "description": "Point 19",
+      "required": false
+    },
+    "currentPhaseA_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 20",
+      "required": false
+    },
+    "currentPhaseB_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 21",
+      "required": false
+    },
+    "currentPhaseC_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 22",
+      "required": false
+    },
+    "currentPhaseN_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 23",
+      "required": false
+    },
+    "voltagePhaseA_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 24",
+      "required": false
+    },
+    "voltagePhaseB_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 25",
+      "required": false
+    },
+    "voltagePhaseC_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 26",
+      "required": false
+    },
+    "P_SUM_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 27",
+      "required": false
+    },
+    "Q_SUM_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 28",
+      "required": false
+    },
+    "PF_AVG_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 29",
+      "required": false
+    },
+    "frequency_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 30",
+      "required": false
+    },
+    "total_kWh_deadband": {
+      "type": "number",
+      "dataType": "double",
+      "description": "Point 31",
+      "required": false
+    },
+    "itemTimestamp": {
+      "type": "number",
+      "required": true,
+      "description": "Point 06",
+      "index": true
+    },
+    "atTimestamp": {
+      "type": "number",
+      "required": true,
+      "index": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "powerUser",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "supervisor",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": [
+        "find",
+        "findById"
+      ]
+    }
+  ],
+  "methods": {}
+}

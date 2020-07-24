@@ -1,0 +1,97 @@
+version: "3"
+services:
+  mq:
+    build: ./mq
+    hostname: rabbit
+    environment:
+      - RABBITMQ_NODENAME=mq
+      - RABBITMQ_DEFAULT_USER=mq-admin
+      - RABBITMQ_DEFAULT_PASS=mq-password
+    volumes:
+      - mq:/var/lib/rabbitmq
+      - mq-config:/config
+    ports:
+      - 5671:5671
+      - 5672:5672
+      - 15671:15671
+      - 15672:15672
+      - 1883:1883
+      - 8883:8883
+    restart: unless-stopped
+  mysql:
+    image: mysql:5.7.29
+    env_file:
+      - .env/mysql.env
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_bin"]
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+  web_tester:
+    build: ./tester-web
+    env_file:
+      - .env/rest.env
+    volumes:
+      - tester_static:/cloud-joint-tester-web/build
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ngix_routes:/etc/nginx/routes.d
+      - tester_static:/var/www/web/TESTER/
+    ports:
+      - 80:80
+      - 443:443
+      - 3000:3000
+    restart: unless-stopped
+  master:
+    build: ./rest
+    env_file:
+      - .env/rest.env
+      - .env/mysql.env
+    volumes:
+      - loopback_storage:/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+  dnp3-master:
+    build: ./dnp3-master
+    env_file:
+      - .env/rest.env
+      - .env/mysql.env
+    environment:
+      - AMQP_HOST=mq
+      - AMQP_USERNAME=mq-admin
+      - API_HOST=master
+      - API_PORT=3000
+      - MYSQL_HOST=mysql
+    depends_on:
+      - mq
+    volumes:
+      - mq-config:/config:ro
+    restart: unless-stopped
+  mq-dreams:
+    build:
+      context: ./dnp3-master
+      dockerfile: Dockerfile-mq-dreams
+    env_file:
+      - .env/mysql.env
+    environment:
+      - AMQP_HOST=mq
+      - AMQP_USERNAME=mq-admin
+      - MYSQL_HOST=mysql
+    depends_on:
+      - mq
+      - mysql
+    volumes:
+      - mq-config:/config:ro
+    restart: unless-stopped
+volumes:
+  mq:
+  mq-config:
+  mysql:
+  tester_static:
+  ngix_routes:
+  loopback_storage:

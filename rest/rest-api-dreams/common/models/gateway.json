@@ -1,0 +1,86 @@
+{
+  "name": "Gateway",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "ipAddress": {
+      "type": "string",
+      "required": true,
+      "index": true
+    },
+    "port": {
+      "type": "number",
+      "required": true
+    },
+    "dnp3Port": {
+      "type": "number",
+      "required": false
+    },
+    "apiToken": {
+      "type": "string",
+      "required": false
+    },
+    "powerMeterCTRatio": {
+      "type": "number",
+      "dataType": "double",
+      "required": false,
+      "default": 1
+    },
+    "powerMeterPTRatio": {
+      "type": "number",
+      "dataType": "double",
+      "required": false,
+      "default": 1
+    },
+    "plantId": {
+      "type": "number",
+      "dataType": "INT",
+      "required": false
+    },
+    "siteToken": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "plant": {
+      "type": "hasMany",
+      "model": "Plant",
+      "foreignKey": "gatewayId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": [
+        "getDnp3Addresses"
+      ]
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": [
+        "find",
+        "findById"
+      ]
+    }
+  ],
+  "methods": {}
+}

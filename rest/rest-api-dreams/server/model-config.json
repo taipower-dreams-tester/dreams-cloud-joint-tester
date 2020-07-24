@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../node_modules/loopback-ds-timestamp-mixin",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "User": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  },
+  "AccessToken": {
+    "dataSource": "mysqlBusiness",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  },
+  "Role": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  },
+  "Plant": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  },
+  "LogRegistersMeter": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  },
+  "LogCurrent": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  },
+  "Control": {
+    "dataSource": null,
+    "public": true
+  },
+  "Gateway": {
+    "dataSource": "mysqlBusiness",
+    "public": true
+  }
+}

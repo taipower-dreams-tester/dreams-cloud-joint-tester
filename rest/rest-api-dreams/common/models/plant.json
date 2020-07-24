@@ -1,0 +1,107 @@
+{
+  "name": "Plant",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "TimeStamp" : true
+  },
+  "properties": {
+    "plantNo": {
+      "type": "string",
+      "required": true,
+      "index": {
+        "unique": true
+      }
+    },
+    "plantName": {
+      "type": "string",
+      "required": true
+    },
+    "totalCapacity": {
+      "type": "number",
+      "dataType": "double",
+      "required": false
+    },
+    "workingAt": {
+      "type": "date",
+      "required": false
+    },
+    "type": {
+      "type": "string",
+      "length": 32,
+      "required": false
+    },
+    "remark": {
+      "type": "string",
+      "length": 1024,
+      "required": false
+    },
+    "dnp3Address": {
+      "type": "number",
+      "dataType": "INT",
+      "required": false
+    },
+    "version": {
+      "type": "number",
+      "required": true,
+      "default": 2.0
+    }
+  },
+  "validations": [],
+  "relations": {
+    "gateway": {
+      "type": "belongsTo",
+      "model": "Gateway"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "admin",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "powerUser",
+      "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "supervisor",
+      "permission": "ALLOW",
+      "property": [
+      ]
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "operator",
+      "permission": "ALLOW",
+      "property": [
+      ]
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": [
+        "find",
+        "findById"
+      ]
+    }
+  ],
+  "indexes": {
+    "unique_address": {
+      "columns": "`gatewayId`, `dnp3Address`",
+      "kind": "unique"
+    }
+  },
+  "methods": {}
+}

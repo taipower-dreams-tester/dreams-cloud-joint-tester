@@ -1,0 +1,9 @@
+[submodule "dnp3-master/deps/rabbitmq-c"]
+	path = dnp3-master/deps/rabbitmq-c
+	url = https://github.com/alanxz/rabbitmq-c.git
+[submodule "dnp3-master/deps/opendnp3"]
+	path = dnp3-master/deps/opendnp3
+	url = https://github.com/dnp3/opendnp3.git
+[submodule "dnp3-master/deps/acl"]
+	path = dnp3-master/deps/acl
+	url = https://github.com/zhengshuxin/acl.git

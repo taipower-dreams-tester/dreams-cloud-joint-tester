@@ -1,0 +1,343 @@
+// reset
+button{
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  text-align: left;
+  &:focus{
+    outline: 0;
+  }
+}
+
+ul{
+  list-style-type: none;
+}
+
+/* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder,
+.form-control::placeholder {
+    color: #ccc;
+    opacity: 1;
+    /* Firefox */
+}
+
+/* Internet Explorer 10-11 */
+:-ms-input-placeholder,
+.form-control::-ms-input-placeholder {
+    color: #ccc;
+}
+
+/* Microsoft Edge */
+::-ms-input-placeholder,
+.form-control::-ms-input-placeholder {
+    color: #ccc;
+}
+
+// test
+$leftNavWidth: 460px;
+$leftNavWidthMobile: 30vw;
+$borderColor: #ddd;
+
+.hide{
+  display: none !important;
+}
+
+.baseDataForm{
+  padding: 20px;
+  max-width: 815px;
+  .label{
+    display: inline-block;
+    width: 180px;
+    text-align: right;
+    padding-right: 10px;
+    margin-bottom: 0;
+  }
+  input{
+    width: calc( 100% - 180px );
+  }
+  .baseDataBtn{
+    float: right;
+  }
+  .baseDataBtn:disabled {
+    cursor: default;
+  }
+  .errorMsg{
+    width: 100%;
+    padding-left: 180px;
+    font-size: 80%;
+    margin-top: 5px;
+    color: red;
+    display: none;
+    &:empty{
+      margin-top: 0;
+    }
+  }
+  .infoText{
+    color: red;
+    text-align: right;
+    font-size: 80%;
+    margin-bottom: 16px;
+  }
+  .form-group{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    &.error{
+      .errorMsg{
+        display: block;
+      }
+      input{
+        border-color: red;
+      }
+    }
+  }
+  .actionRow{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .left{
+      width: calc( 100% - 100px );
+    }
+    .setBaseDataErrMsg{
+      color: red;
+      font-size: 80%;
+    }
+  }
+}
+
+.testPageWrap{
+  display: flex;
+  align-items: flex-start;
+}
+
+.leftMenuWrap{
+  height: 100vh;
+  width: $leftNavWidth;
+  padding-left: 16px;
+  padding-right: 16px;
+  overflow-y: auto;
+  background-color: #F5F6FA;
+  .navGroupWrap{
+    margin-bottom: 0px;
+    padding: 16px 0;
+    &:not(:last-of-type){
+      border-bottom: 1px solid $borderColor;
+    }
+  }
+  .navSubitem{
+    display: table-row;
+    width: 100%;
+    height: 14px;
+    padding: 4px 8px;
+    span{
+      display: inline-block;
+      margin-right: 4px;
+      font-weight: bold;
+      font-size: 110%;
+    }
+    button{
+      display: table-cell;
+      color: #000;
+      font-size: 14px;
+      &:hover{
+        text-decoration: underline;
+      }
+    }
+    &.active{
+      background-color: #E9EAF2;
+      button {
+        &:hover{
+          text-decoration: none;
+        }
+      }
+    }
+    .statusIndicator {
+      display: table-cell;
+      width: 48px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .outcomePass {
+      color: #28a745;
+    }
+    .outcomeNotPass {
+      color: red;
+    }
+  }
+}
+
+.TestContentBaseWrap{
+  height: 100vh;
+  overflow-y: auto;
+  width: calc( 100% - #{$leftNavWidth} );
+  padding: 16px;
+  section{
+    width: 100%;
+  }
+  .testTopInfo{
+    width: 100%;
+    border-radius: 4px;
+    padding: 16px;
+    border: 1px solid $borderColor;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .topInfo{
+    width: 100%;
+  }
+  .title{
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  .beginTestBtn{
+    min-width: 120px;
+    text-align: center;
+  }
+  .beginTestBtn:disabled{
+    cursor: default;
+  }
+  .testBottomInfo{
+    height: 150px;
+    display: flex;
+    align-items: stretch;
+  }
+  .subTitle{
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  .testOutcome{
+    flex: 1 1 auto;
+    min-width: calc( 50% - 8px );
+    border-radius: 4px;
+    padding: 16px;
+    border: 1px solid $borderColor;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  .outcome{
+    font-size: 20px;
+  }
+  .outcomeNotPass{
+    color: red;
+  }
+  .outcomePass{
+    color: #28a745;
+  }
+  .manualCheck{
+    flex: 1 1 auto;
+    min-width: calc( 50% - 8px );
+    border-radius: 4px;
+    padding: 16px;
+    border: 1px solid $borderColor;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-left: 16px;
+  }
+  .manualNotPassTestBtn{
+    margin-left: 16px;
+  }
+}
+
+.loadingIco{
+  img{
+    width: 50px;
+    height: auto;
+  }
+}
+
+.plantDataWrap{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  ul{
+    width: 20%;
+    min-width: 150px;
+    padding: 8px 16px;
+    font-size: 14px;
+    &:first-of-type{
+      padding-left: 0;
+    }
+    &:not(:first-of-type){
+      border-left: 1px solid $borderColor;
+    }
+  }
+  .value{
+    font-weight: bold;
+  }
+}
+
+.dataWarn{
+  color: red;
+}
+
+.isSetOk{
+  margin-bottom: 12px;
+}
+
+.otherInfo, .otherInfo2{
+  padding: 8px;
+  font-size: 14px;
+  .value{
+    font-weight: bold;
+  }
+}
+
+.otherInfo{
+  margin-top: 12px;
+}
+
+$inputOneNumWidth: 12px;
+$inputOneNumBothPadding: 26px;
+
+.plantNoInputWrap{
+  display: flex;
+  align-items: center;
+  .num1{
+    width: calc( #{$inputOneNumWidth * 1} + #{$inputOneNumBothPadding} );
+  }
+  .num2{
+    width: calc( #{$inputOneNumWidth * 2} + #{$inputOneNumBothPadding} );
+  }
+  .num4{
+    width: calc( #{$inputOneNumWidth * 4} + #{$inputOneNumBothPadding} );
+  }
+}
+
+.showCustomToken{
+  padding: 16px;
+  clear: both;
+  width: 545px;
+  word-break: break-word;
+  span{
+    float: left;
+    &:first-of-type{
+      width: 80px;
+      margin-right: 4px;
+    }
+    &:last-of-type{
+      width: calc( 100% - 84px );
+    }
+  }
+}
+
+@media screen and (max-width: 1600px) {
+  .plantDataWrap{
+    ul{
+      width: 33%;
+    }
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .leftMenuWrap{
+    width: $leftNavWidthMobile;
+  }
+  .TestContentBaseWrap{
+    width: calc( 100% - #{$leftNavWidthMobile} );
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Role",
+  "forceId": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": "string",
+    "created": {
+      "type":"date",
+      "defaultFn": "now"
+    },
+    "modified": {
+      "type":"date",
+      "defaultFn": "now"
+    }
+  },
+  "relations": {
+    "principals": {
+      "type": "hasMany",
+      "model": "RoleMapping",
+      "foreignKey": "roleId"
+    }
+  }
+}

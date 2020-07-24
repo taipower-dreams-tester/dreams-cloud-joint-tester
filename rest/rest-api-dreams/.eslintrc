@@ -1,0 +1,17 @@
+{
+  "env": {
+    "node": true,
+    "browser": false,
+    "es6": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "extends": ["loopback", "airbnb-base", "eslint:recommended"],
+  "rules": {
+    "max-len": [2, { "code": 160, "tabWidth": 2 }],
+    "object-curly-spacing": 0,
+    "eqeqeq": 2
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "mysqlBusiness": {
+    "host": "localhost",
+    "port": 3306,
+    "url": "",
+    "database": "dreams_business",
+    "password": "top_secret",
+    "name": "mysqlBusiness",
+    "user": "root",
+    "connector": "mysql",
+    "connectTimeout": 60000
+  },
+  "storage": {
+    "name": "storage",
+    "connector": "loopback-component-storage",
+    "provider": "filesystem",
+    "root": "../storage"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "extends": ["airbnb"],
+  "rules": {
+    "max-len": [2, { "code": 160, "tabWidth": 2 }],
+    "object-curly-newline": ["error", { "ObjectPattern": { "minProperties": 5, "consistent": true } }],
+    "react/forbid-prop-types": 0,
+    "react/jsx-filename-extension": 0,
+    "react/prefer-stateless-function": 0,
+    "react/no-multi-comp": 0,
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["webpack.config.js", "test/**", "**/__tests__/*.spec.js"]}]
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "APPLICATION_MODE": false,
+    "PRODUCTION_MODE": false
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  }
+}

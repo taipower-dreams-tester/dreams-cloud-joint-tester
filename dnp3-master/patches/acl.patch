@@ -1,0 +1,52 @@
+diff --git a/lib_acl/CMakeLists.txt b/lib_acl/CMakeLists.txt
+index 1b054f78..c15243bf 100644
+--- a/lib_acl/CMakeLists.txt
++++ b/lib_acl/CMakeLists.txt
+@@ -124,7 +124,12 @@ if (${UNIX_OS})
+ 			OUTPUT_VARIABLE GCC_VERSION)
+ 		string(REGEX MATCHALL "[0-9]+" GCC_VERSION_COMPONENTS ${GCC_VERSION})
+ 		list(GET GCC_VERSION_COMPONENTS 0 GCC_MAJOR)
+-		list(GET GCC_VERSION_COMPONENTS 1 GCC_MINOR)
++		list(LENGTH GCC_VERSION_COMPONENTS GCC_VERSION_COMPONENTS_LENGTH)
++		if(GCC_VERSION_COMPONENTS_LENGTH GREATER 1)
++			list(GET GCC_VERSION_COMPONENTS 1 GCC_MINOR)
++		else()
++			set(GCC_MINOR, 0)
++		endif()
+ 
+ 		if(CMAKE_VERSION GREATER "3.0")
+ 			if ((GCC_MAJOR GREATER_EQUAL 4) AND (GCC_MINOR GREATER_EQUAL 8))
+diff --git a/lib_acl/src/stdlib/common/acl_hash.c b/lib_acl/src/stdlib/common/acl_hash.c
+index 157e9737..996123aa 100644
+--- a/lib_acl/src/stdlib/common/acl_hash.c
++++ b/lib_acl/src/stdlib/common/acl_hash.c
+@@ -487,21 +487,29 @@ unsigned acl_hash_func3(const void *buf, size_t len)
+ 
+ 	loop = ((unsigned int) len + 8 - 1) >> 3;
+ 	switch (len & (8 - 1)) {
++	// fall through
+ 	case 0:
+ 		do {
+ 			HASHC;
++	// fall through
+ 	case 7:
+ 			HASHC;
++	// fall through
+ 	case 6:
+ 			HASHC;
++	// fall through
+ 	case 5:
+ 			HASHC;
++	// fall through
+ 	case 4:
+ 			HASHC;
++	// fall through
+ 	case 3:
+ 			HASHC;
++	// fall through
+ 	case 2:
+ 			HASHC;
++	// fall through
+ 	case 1:
+ 			HASHC;
+ 		} while (--loop);
