@@ -29,8 +29,6 @@ git submodule update --init --recursive
 ```
 MYSQL_ROOT_PASSWORD=top_secret                          # MySQL root 密碼
 MYSQL_DATABASE=dreams_business                          # 無須更改
-MYSQL_USER=taipower                                     # MySQL root之外的帳號
-MYSQL_PASSWORD=another_top_secret                       # 上面帳號的密碼
 MYSQL_ADDRESS=mysql                                     # 無須更改，"mysql"是docker之間的alias
 ADMIN_ACCESS_TOKEN=top_secret_token                     # API server的API token(Admin，供測試程式本身使用)
 JOINTER_ACCESS_TOKEN=site_token_for_cloud_jointer       # API server的API token(雲端對接系統專用)

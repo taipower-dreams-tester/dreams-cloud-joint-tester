@@ -167,8 +167,8 @@ async def main(loop):
 
     mysql_params = {
         'host': environ.get('MYSQL_HOST', 'localhost'),
-        'user': environ.get('MYSQL_USER', 'user'),
-        'passwd': environ.get('MYSQL_PASSWORD', 'pass'),
+        'user': 'root',
+        'passwd': environ.get('MYSQL_ROOT_PASSWORD', 'pass'),
         'database': environ.get('MYSQL_DB', 'dreams_business'),
     }
     mydb = mysql.connector.connect(**mysql_params)
