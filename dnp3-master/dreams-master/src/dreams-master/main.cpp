@@ -61,6 +61,38 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
   return size * nmemb;
 }
 
+Value& json_traverse(Value& obj, const char* path) {
+  string part;
+  stringstream iss(path);
+  Value* cursor = &obj;
+  while(getline(iss, part, '.')) {
+    if (cursor->IsArray() && part[0] == '[' && part[part.size() - 1] == ']') { //array
+      int pos = stoi(part.substr(1, part.size() - 2));
+      cursor = &((*cursor)[pos]);
+    } else if (cursor->IsObject()) {
+      cursor = &((*cursor)[part.c_str()]);
+    } else {
+      break;
+    }
+  }
+  return (*cursor);
+}
+
+int json_get(Value& obj, const char* path, const int fallback) {
+  Value& value = json_traverse(obj, path);
+  return value.IsInt() ? value.GetInt() : fallback;
+}
+
+string json_get(Value& obj, const char* path, const string fallback) {
+  Value& value = json_traverse(obj, path);
+  return value.IsString() ? value.GetString() : fallback;
+}
+
+double json_get(Value& obj, const char* path, const double fallback) {
+  Value& value = json_traverse(obj, path);
+  return (value.IsDouble() || value.IsInt()) ? value.GetDouble() : fallback;
+}
+
 int main(int, char **) {
   // This is the main point of interaction with the stack
   DNP3Manager manager(1, ConsoleLogger::Create());
@@ -86,21 +118,14 @@ int main(int, char **) {
     assert(document.IsArray());
     for (SizeType i = 0; i < document.Size(); i++) { // Uses SizeType instead of size_t
       assert(document[i].IsObject());
-      std::string plantNo = document[i]["plantNo"].IsString() ? document[i]["plantNo"].GetString() : "";
-      std::string plantName = document[i]["plantName"].IsString() ? document[i]["plantName"].GetString() : "";
-      std::string gatewayAddress = document[i]["gateway"].IsObject() && document[i]["gateway"]["ipAddress"].IsString()
-                                       ? document[i]["gateway"]["ipAddress"].GetString()
-                                       : "";
-      uint16_t gatewayPort = document[i]["gateway"].IsObject() && document[i]["gateway"]["dnp3Port"].IsInt()
-                                 ? document[i]["gateway"]["dnp3Port"].GetInt()
-                                 : 20000;
-      double ctRatio = document[i]["gateway"].IsObject() && document[i]["gateway"]["powerMeterCTRatio"].IsDouble()
-                           ? document[i]["gateway"]["powerMeterCTRatio"].GetDouble()
-                           : 1;
-      double ptRatio = document[i]["gateway"].IsObject() && document[i]["gateway"]["powerMeterPTRatio"].IsDouble()
-                           ? document[i]["gateway"]["powerMeterPTRatio"].GetDouble()
-                           : 1;
-      uint16_t remoteAddr = document[i]["dnp3Address"].IsInt() ? document[i]["dnp3Address"].GetInt() : 4;
+      std::string plantNo = json_get(document[i], "plantNo", "");
+      std::string plantName = json_get(document[i], "plantName", "");
+      std::string gatewayAddress = json_get(document[i], "gateway.ipAddress", "");
+      uint16_t gatewayPort = json_get(document[i], "gateway.dnp3Port", 20000);
+      double ctRatio = json_get(document[i], "gateway.powerMeterCTRatio", 1.0);
+      double ptRatio = json_get(document[i], "gateway.powerMeterPTRatio", 1.0);
+      uint16_t remoteAddr = json_get(document[i], "dnp3Address", 4);
+
 
       if (gateways.find(gatewayAddress) == gateways.end()) {
         auto gateway = make_shared<Gateway>(&manager, gatewayAddress, gatewayPort);
@@ -108,7 +133,8 @@ int main(int, char **) {
       }
 
       gateways[gatewayAddress]->AddMaster(remoteAddr, plantNo, plantName, ctRatio, ptRatio);
-      cout << "Added gateway: " << gatewayAddress << endl;
+      cout << "Gateway added for plant: " << plantNo << ", " << plantName << ", " << gatewayAddress << ", " << gatewayPort << ", " <<
+        ctRatio << ", " << ptRatio << ", " << remoteAddr << endl;
     }
   }
 
