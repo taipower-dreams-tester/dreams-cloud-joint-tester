@@ -95,6 +95,15 @@
         "find",
         "findById"
       ]
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": [
+        "plantMeterNo"
+      ]
+
     }
   ],
   "indexes": {

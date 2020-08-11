@@ -23,6 +23,32 @@ module.exports = function(Plant) {
     });
   })
 
+  Plant.remoteMethod('plantMeterNo', {
+    http: {path: '/plantMeterNo/:plantNo', verb: 'get'},
+    accepts: [
+      { arg: 'plantNo', type: 'string', required: true, description: 'plantNo' },
+      { arg: 'options', type: 'object', http: 'optionsFromRequest' },
+    ],
+    returns: { arg: 'data', type: 'object', root: true },
+  });
+
+  Plant.plantMeterNo = async function(plantNo, options) {
+    const models = Plant.app.models;
+    const plants = await Plant.find({'where': {plantNo}});
+    if (_.isEmpty(plants)) {
+      throw {status: 404, message: `No plant found for plantNo ${plantNo}`};
+    }
+    const { gatewayId: id } = plants[0].toObject();
+    const siteToken = options.accessToken.id;
+    const gateway = await models.Gateway.findOne({'where': {id, siteToken}, 'include': ['plant']});
+    if (gateway === null) {
+      throw {status: 404, message: `No gateway found for plant ${plantNo} with token ${siteToken}`};
+    }
+    return gateway.plant().map(({plantName, plantNo, dnp3Address}) => {
+      return {plantName, plantNo, dnp3Address};
+    });
+  };
+
   Plant.remoteMethod('integrityPoll', {
     http: {path: '/integrityPoll', verb: 'post'},
     accepts: [
