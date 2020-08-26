@@ -103,11 +103,11 @@ class OfflineTest extends PureComponent {
   processData = (logs) => {
     const { startTimestamp } = this.state;
     const now = baseUtils.setTimestemp().sec;
-    const newDataArrived = _.some(logs, log => log.atTimestamp > startTimestamp);
-    const timeouted = _.every(logs, log => log.atTimestamp < (now - 900));
+    const newDataArrived = _.some(logs, log => log.itemTimestamp > startTimestamp);
+    const timeouted = _.every(logs, log => log.itemTimestamp < (now - 900));
     const data = _.map(this.props.plants, (plantNo) => {
       const current = _.find(logs, log => log.plantNo === plantNo);
-      return { plantNo, lastUpdate: (current ? current.atTimestamp : startTimestamp) }
+      return { plantNo, lastUpdate: (current ? current.itemTimestamp : startTimestamp) }
     });
     return { newDataArrived, timeouted, data };
   }
