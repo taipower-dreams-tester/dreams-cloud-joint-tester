@@ -29,16 +29,16 @@ const vector<Point *> points() {
   all.push_back(new Point(100, "voltagePhaseC", false, true));
 
   // 07: kW
-  all.push_back(new Point(1, "P_SUM", true, true));
+  all.push_back(new Point(1000, "P_SUM", true, true));
 
   // 08: kVar
-  all.push_back(new Point(1, "Q_SUM", true, true));
+  all.push_back(new Point(1000, "Q_SUM", true, true));
 
   // 09: PF
   all.push_back(new Point(100, "PF_AVG"));
 
   // 10: Frequency
-  all.push_back(new Point(1, "frequency"));
+  all.push_back(new Point(10, "frequency"));
 
   // 11: Wha
   all.push_back(new Point(1000, "total_kWh", true, true));
