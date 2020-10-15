@@ -114,7 +114,7 @@ class TestFourOne extends PureComponent {
     axios.get(`${service.getPLantLog}`,{ params: {
       access_token: this.props.token,
       filter: {
-        order: "itemTimestamp DESC",
+        order: "itemTimestamp ASC",
         where: {
           and: [
               { itemTimestamp: { gt: this.stopDreamsTimeStemp } }
