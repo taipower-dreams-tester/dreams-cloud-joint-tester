@@ -1,4 +1,4 @@
-FROM node:10.13.0
+FROM node:10.14.2
 
 COPY ./cloud-joint-tester-web/package.json /cloud-joint-tester-web/package.json
 WORKDIR /cloud-joint-tester-web
