@@ -52,21 +52,17 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
   vector<PointValue> AI;
   bool updated = false;
   AI.resize(allPoints.size());
-  unsigned long long gatewayTimestamp = 0;
 
   printf("[%s %s] analog input:", m_gatewayAddress.c_str(), m_plantName.c_str());
-  auto print = [&AI, &gatewayTimestamp, &updated](const Indexed<Analog> &pair) {
+  auto print = [&AI, &updated](const Indexed<Analog> &pair) {
     if (pair.index < allPoints.size()) {
       AI[pair.index].value = pair.value.value;
       AI[pair.index].updated = true;
-      gatewayTimestamp = pair.value.time / 1000;
       printf(" [%d]=%g", pair.index, pair.value.value);
       updated = true;
     }
   };
   values.ForeachItem(print);
-  if (gatewayTimestamp > 0)
-    printf(" gatewayTimestamp=%llu", gatewayTimestamp);
   printf(" timestamp=%u\n", currentTimestamp);
 
   // insert to LogRegistersMeters
@@ -89,11 +85,6 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
         }
         post_data << ",\"" << allPoints[i]->field << "\":" << value;
       }
-    }
-    if (gatewayTimestamp > 0) {
-      char strGatewayTimestamp[64];
-      sprintf(strGatewayTimestamp, ",\"gatewayTimestamp\":%llu", gatewayTimestamp);
-      post_data << strGatewayTimestamp;
     }
     post_data << "}";
 
