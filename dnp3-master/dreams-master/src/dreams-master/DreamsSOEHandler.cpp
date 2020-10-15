@@ -74,7 +74,7 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
     post_data << "{\"plantNo\":\"" << m_plantNo << "\",\"itemTimestamp\":" << strTimestamp;
     for (size_t i = 0; i < allPoints.size(); i++) {
       if (AI[i].updated) {
-        cout << allPoints[i]->field << ' ' << AI[i].value << ' ' << allPoints[i]->ratio << ' ' << m_ctRatio << ' '
+        cout << allPoints[i]->field << ' ' << fixed << AI[i].value << ' ' << allPoints[i]->ratio << ' ' << m_ctRatio << ' '
              << m_ptRatio << endl;
         auto value = AI[i].value / allPoints[i]->ratio;
         if (allPoints[i]->ctRatio) {
