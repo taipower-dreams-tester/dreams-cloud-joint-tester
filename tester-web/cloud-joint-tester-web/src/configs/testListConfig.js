@@ -35,7 +35,7 @@ export default {
     '1-1': {
       id: '1-1',
       title: 'DREAMS模擬伺服器可成功連線至受測雲端資料系統。',
-      description: '點選以下按鈕，與203.110.1.12 建立連線。',
+      description: '點選以下按鈕，與 {ip} 建立連線。',
     },
     '1-2': {
       id: '1-2',

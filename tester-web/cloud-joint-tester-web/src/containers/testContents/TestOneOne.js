@@ -69,7 +69,7 @@ class TestOneOne extends PureComponent {
         testId={testId}
         isShow={this.props.activeTestTag === testId}
         title={testSet.title}
-        description={testSet.description}
+        description={testSet.description.replace('{ip}', this.props.ip)}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -82,7 +82,7 @@ class TestOneOne extends PureComponent {
 
 const mapStateToProps = ({ testReducer  }) => ({
   activeTestTag: testReducer.activeTestTag,
-  ip: testReducer.activeTestTag,
+  ip: testReducer.ip,
   controlPlantNum: testReducer.controlPlantNum,
   unControlPlantNum: testReducer.unControlPlantNum,
   token: testReducer.token,
