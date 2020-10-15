@@ -27,6 +27,8 @@ const showPlantTestItems = [
   'PF_AVG',
   'frequency',
   'total_kWh',
+  'itemTimestamp',
+  'atTimestamp',
 ];
 
 class TestFourOne extends PureComponent {
