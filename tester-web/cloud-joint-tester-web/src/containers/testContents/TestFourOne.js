@@ -13,7 +13,6 @@ const { testContentSettings } = testListConfig;
 const testId = '4-1';
 const testSet = testContentSettings[testId];
 const showPlantTestItems = [
-  // 'plantTypeId',
   'plantNo',
   'currentPhaseA',
   'currentPhaseB',
