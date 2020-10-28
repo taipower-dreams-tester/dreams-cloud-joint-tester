@@ -1,6 +1,8 @@
 const { readFile } = require('fs');
 const { promisify } = require('util');
 const { Docker } = require('node-docker-api');
+const { getContainerIdMatchPattern } = require('../../server/constant');
+
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 const readFilePromise = promisify(readFile);
 
@@ -22,7 +24,7 @@ const readFilePromise = promisify(readFile);
 */
 async function getMyId() {
   const data = await readFilePromise('/proc/self/cgroup', { encoding: 'ascii' });
-  const [, id] = data.split('\n').filter(line => line.includes('docker'))[0].match(/\/docker\/(.+)/);
+  const [, id] = data.split('\n').filter(line => line.includes('docker'))[0].match(getContainerIdMatchPattern());
   return id;
 }
 
