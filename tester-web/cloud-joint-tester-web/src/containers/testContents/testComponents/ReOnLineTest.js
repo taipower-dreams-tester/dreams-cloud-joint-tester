@@ -128,7 +128,7 @@ class ReOnLineTest extends PureComponent {
   getData = () => {
     let filter = _.merge(
       {
-        order: "itemTimestamp DESC",
+        order: "itemTimestamp ASC",
         where: {
           and: [
               { currentPhaseA: { neq: null } },
