@@ -116,11 +116,11 @@ class TestFourOne extends PureComponent {
         order: "itemTimestamp ASC",
         where: {
           and: [
-              { itemTimestamp: { gt: this.stopDreamsTimeStemp } }
-          ],
-          or: [
-            { plantNo: this.props.controlPlantNum },
-            { plantNo: this.props.unControlPlantNum },
+            { itemTimestamp: { gt: this.stopDreamsTimeStemp } },
+            { or: [
+              { plantNo: this.props.controlPlantNum },
+              { plantNo: this.props.unControlPlantNum },
+            ]},
           ]
         }
     }}})
