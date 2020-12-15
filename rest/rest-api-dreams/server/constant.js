@@ -5,7 +5,7 @@ const { constant } = require('lodash');
 
 let constants = {
   getOwnerKey: function() { return process.env.OWNER_KEY || 'dreams'; },
-  getContainerIdMatchPattern: function() { return /\/system.slice\/docker-(.+).scope/; },
+  getContainerIdMatchPattern: function() { return /\/docker\/(.+)/; },
 };
 
 try {
