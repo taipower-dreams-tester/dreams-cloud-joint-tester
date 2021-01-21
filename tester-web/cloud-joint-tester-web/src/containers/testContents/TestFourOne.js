@@ -101,10 +101,10 @@ class TestFourOne extends PureComponent {
       }
     });
     // check if have two control plant and two uncontrol plant complete data
-    const isPass = (controlLogs.length >= 2 && unontrolLogs.length >= 2);
+    const isPass = (controlLogs.length >= 3 && unontrolLogs.length >= 3);
     return {
       isPass,
-      recoverLogs: controlLogs.slice(0, 2).concat(unontrolLogs.slice(0, 2))
+      recoverLogs: controlLogs.slice(0, 3).concat(unontrolLogs.slice(0, 3))
     };
   }
   
