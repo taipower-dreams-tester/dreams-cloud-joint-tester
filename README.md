@@ -21,7 +21,7 @@ sudo apt install docker-compose
 0. 安裝過程中請確保網路暢通
 1. Git clone或下載原始碼到欲安裝的機器，如果是用git clone請確保submodule都有下載完整
 ```
-git clone https://github.com/thingnario/dreams-cloud-joint-tester.git`
+git clone https://github.com/thingnario/dreams-cloud-joint-tester.git
 cd dreams-cloud-joint-tester
 git submodule update --init --recursive
 ```
