@@ -1,4 +1,4 @@
-FROM nginx:1.12.1-alpine
+FROM nginx:1.21.1-alpine
 
 CMD ["nginx", "-g", "daemon off;"]
 
