@@ -1,4 +1,4 @@
-FROM node:10.21.0
+FROM node:12.22.4
 
 COPY ./rest-api-dreams/package.json /rest-api-dreams/package.json
 
