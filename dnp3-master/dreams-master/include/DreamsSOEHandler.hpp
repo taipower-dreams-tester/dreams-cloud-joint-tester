@@ -42,6 +42,7 @@ class DreamsSOEHandler final : public opendnp3::ISOEHandler {
   std::string m_gatewayAddress;
   std::string m_plantNo;
   std::string m_plantName;
+  std::string m_data;
   double m_ctRatio = 1.0;
   double m_ptRatio = 1.0;
 
@@ -88,8 +89,8 @@ public:
                        const opendnp3::ICollection<opendnp3::DNPTime> &values) override;
 
 protected:
-  void Start() final {}
-  void End() final {}
+  void Start() final;
+  void End() final;
 
 private:
   template <class T>

@@ -44,16 +44,41 @@ void DreamsSOEHandler::Process(const HeaderInfo &info, const ICollection<Indexed
   return PrintAll(info, values);
 }
 
-void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Analog>> &values) {
+void DreamsSOEHandler::Start() {
   unsigned int currentTimestamp = (unsigned)time(NULL);
   char strTimestamp[16];
   sprintf(strTimestamp, "%u", currentTimestamp);
+  printf("[%s %s] @timestamp=%u analog input:", m_gatewayAddress.c_str(), m_plantName.c_str(), currentTimestamp);
+  stringstream ss;
+  ss << "{\"plantNo\":\"" << m_plantNo << "\",\"itemTimestamp\":" << strTimestamp;
+  m_data = ss.str();
+}
+
+void DreamsSOEHandler::End() {
+  m_data = m_data + "}";
+  cout << m_data << endl;
+  // *** USE AMQP
+  if (ptr_amqp_sender == NULL) {
+    string amqp_host = getenv_default("AMQP_HOST", "localhost");
+    string amqp_port_str = getenv_default("AMQP_PORT", "5672");
+    int amqp_port;
+    istringstream(amqp_port_str) >> amqp_port;
+    string amqp_routing_key = getenv_default("AMQP_ROUTING_KEY", "dnp3_messages");
+    string amqp_username = getenv_default("AMQP_USERNAME", "guest");
+    string amqp_password = getenv_default("AMQP_PASSWORD", "guest");
+    ptr_amqp_sender = new AMQPStringSender(amqp_host, amqp_port, amqp_routing_key, amqp_username, amqp_password);
+  }
+  ptr_amqp_sender->SendString(m_data.c_str());
+  printf("\n");
+}
+
+void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Analog>> &values) {
+  unsigned int currentTimestamp = (unsigned)time(NULL);
 
   vector<PointValue> AI;
   bool updated = false;
   AI.resize(allPoints.size());
 
-  printf("[%s %s] analog input:", m_gatewayAddress.c_str(), m_plantName.c_str());
   auto print = [&AI, &updated](const Indexed<Analog> &pair) {
     if (pair.index < allPoints.size()) {
       AI[pair.index].value = pair.value.value;
@@ -67,11 +92,8 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
 
   // insert to LogRegistersMeters
   if (updated) {
-
-    // char post_data[1024];
     stringstream post_data;
     post_data.precision(dbl::max_digits10);
-    post_data << "{\"plantNo\":\"" << m_plantNo << "\",\"itemTimestamp\":" << strTimestamp;
     for (size_t i = 0; i < allPoints.size(); i++) {
       if (AI[i].updated) {
         cout << allPoints[i]->field << ' ' << fixed << AI[i].value << ' ' << allPoints[i]->ratio << ' ' << m_ctRatio << ' '
@@ -86,20 +108,8 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
         post_data << ",\"" << allPoints[i]->field << "\":" << value;
       }
     }
-    post_data << "}";
 
-    // *** USE AMQP
-    if (ptr_amqp_sender == NULL) {
-      string amqp_host = getenv_default("AMQP_HOST", "localhost");
-      string amqp_port_str = getenv_default("AMQP_PORT", "5672");
-      int amqp_port;
-      istringstream(amqp_port_str) >> amqp_port;
-      string amqp_routing_key = getenv_default("AMQP_ROUTING_KEY", "dnp3_messages");
-      string amqp_username = getenv_default("AMQP_USERNAME", "guest");
-      string amqp_password = getenv_default("AMQP_PASSWORD", "guest");
-      ptr_amqp_sender = new AMQPStringSender(amqp_host, amqp_port, amqp_routing_key, amqp_username, amqp_password);
-    }
-    ptr_amqp_sender->SendString(post_data.str().c_str());
+    m_data = m_data + post_data.str();
   }
 }
 
