@@ -197,12 +197,6 @@
       "description": "Point 30",
       "required": false
     },
-    "total_kWh_deadband": {
-      "type": "number",
-      "dataType": "double",
-      "description": "Point 31",
-      "required": false
-    },
     "DG_PF": {
       "type": "number",
       "required": false

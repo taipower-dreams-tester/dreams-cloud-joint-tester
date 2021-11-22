@@ -42,7 +42,6 @@ FIELDS1 = [
     'Q_SUM_deadband',
     'PF_AVG_deadband',
     'frequency_deadband',
-    'total_kWh_deadband',
     'itemTimestamp',
     'atTimestamp',
     'plantNo',
@@ -86,7 +85,6 @@ COALESCE_FIELDS2 = [
     'Q_SUM_deadband',
     'PF_AVG_deadband',
     'frequency_deadband',
-    'total_kWh_deadband',
 ]
 NORMAL_FIELDS2 = [
     'itemTimestamp',

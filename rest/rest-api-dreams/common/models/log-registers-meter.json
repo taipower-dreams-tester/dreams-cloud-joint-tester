@@ -198,12 +198,6 @@
       "description": "Point 30",
       "required": false
     },
-    "total_kWh_deadband": {
-      "type": "number",
-      "dataType": "double",
-      "description": "Point 31",
-      "required": false
-    },
     "itemTimestamp": {
       "type": "number",
       "required": true,
