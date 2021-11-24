@@ -144,6 +144,10 @@ module.exports = function(Plant) {
       irradiance: 16,
       wind_speed: 17,
     }
+    if (!(field in point_mapping)) {
+      throw { statusCode: 400, message: `The specified field is not supported ${field}`};
+    }
+
     const models = Plant.app.models;
     const plant = await models.Plant.findOne({ where: { plantNo }, include: { relation: 'gateway' }});
     if (!plant) { return null; }

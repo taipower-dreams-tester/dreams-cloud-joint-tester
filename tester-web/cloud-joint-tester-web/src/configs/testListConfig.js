@@ -275,10 +275,6 @@ export default {
       title: 'Frequency Deadband',
       defaultValue: 0.005,
     },
-    total_kWh_deadband: {
-      title: 'Wh Deadband',
-      defaultValue: '-',
-    },
     // 時間戳 需再確認是不是這一個 key
     itemTimestamp: {
       title: '時間戳',

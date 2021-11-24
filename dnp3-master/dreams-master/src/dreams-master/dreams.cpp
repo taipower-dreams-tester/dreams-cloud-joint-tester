@@ -100,7 +100,7 @@ const vector<Point *> points() {
   // 30: Frequency Dead Band Threshold
   all.push_back(new Point(10000, "frequency_deadband"));
 
-  // 31: Wha Dead Band Threshold
+  // 31: Wha Dead Band Threshold, legacy field kept only for backward compatibility
   all.push_back(new Point(10000, "total_kWh_deadband"));
 
   // 32: Timestamp
