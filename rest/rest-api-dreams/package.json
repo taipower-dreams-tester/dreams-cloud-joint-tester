@@ -45,7 +45,6 @@
     "mathjs": "5.1.2",
     "moment": "2.18.1",
     "moment-timezone": "0.5.14",
-    "node-celery": "0.2.8",
     "node-docker-api": "1.1.22",
     "node-uuid": "1.4.8",
     "nodemailer": "5.1.1",
