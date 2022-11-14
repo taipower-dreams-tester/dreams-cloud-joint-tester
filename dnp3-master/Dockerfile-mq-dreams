@@ -1,5 +1,6 @@
 FROM python:3.6
-RUN pip install -U \
+RUN pip install --upgrade pip
+RUN pip install -U\
   aio-pika==6.6.0 \
   aiormq==3.2.1 \
   appdirs==1.4.3 \
@@ -22,7 +23,6 @@ RUN pip install -U \
   paramiko==2.7.1 \
   pbr==5.4.5 \
   pycparser==2.20 \
-  PyNaCl==1.3.0 \
   requests==2.23.0 \
   stevedore==1.32.0 \
   texttable==1.6.2 \
