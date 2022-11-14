@@ -1,6 +1,7 @@
 FROM node:12.22.4
 
 COPY ./rest-api-dreams/package.json /rest-api-dreams/package.json
+COPY ./rest-api-dreams/yarn.lock /rest-api-dreams/yarn.lock
 
 WORKDIR /rest-api-dreams
 
