@@ -9,10 +9,8 @@ import PLantData from '../../PLantData';
 import baseUtils from '../../../utils/base';
 import service from "../../../configs/serviceConfig";
 
-import testListConfig from '../../../configs/testListConfig'; 
+import testListConfigMap from '../../../configs/testListConfigMap';
 import { updateTestResult } from '../../../store/actions/testAction';
-
-const { testContentSettings } = testListConfig;
 
 const testItems = {
   plantNo: {
@@ -48,6 +46,9 @@ class OfflineTest extends PureComponent {
 
     this.getDataTimeout = null;
     this.getDataInterval = null;
+
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[props.testId];
   }
 
   componentWillUnmount () {
@@ -70,7 +71,7 @@ class OfflineTest extends PureComponent {
           data={state.data}
           testId={testId}
           showPlantTestItems={this.showPlantTestItems}
-          customConfig={testItems}
+          config={testItems}
         />,
       };
     });
@@ -111,7 +112,7 @@ class OfflineTest extends PureComponent {
     });
     return { newDataArrived, timeouted, data };
   }
-  
+
   // call second api
   getData = () => {
     let filter = _.merge(
@@ -154,7 +155,7 @@ class OfflineTest extends PureComponent {
                 data={data}
                 testId={testId}
                 showPlantTestItems={this.showPlantTestItems}
-                customConfig={testItems}
+                config={testItems}
               />
             }
           </>,
@@ -236,13 +237,11 @@ class OfflineTest extends PureComponent {
       testId,
       isManualJudgment,
     } = this.props;
-    const testSet = testContentSettings[testId];
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -271,6 +270,7 @@ OfflineTest.defaultProps = {
 };
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   token: testReducer.token,

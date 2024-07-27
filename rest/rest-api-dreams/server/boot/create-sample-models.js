@@ -57,7 +57,6 @@ async function mysqlBusinessMigrate(app) {
   app.dataSources.mysqlBusiness.autoupdate('Gateway', getNewFieldsMigrator(
     app.models.Gateway,
     [
-      { name: 'dnp3Port', getDefault: () => 20000 },
       { name: 'powerMeterCTRatio', getDefault: () => 1 },
       { name: 'powerMeterPTRatio', getDefault: () => 1 }
     ]

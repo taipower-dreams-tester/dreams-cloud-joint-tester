@@ -7,10 +7,8 @@ import TestContentBase from '../../TestContentBase';
 import baseUtils from '../../../utils/base';
 import service from "../../../configs/serviceConfig";
 
-import testListConfig from '../../../configs/testListConfig';
+import testListConfigMap from '../../../configs/testListConfigMap';
 import { updateTestResult } from '../../../store/actions/testAction';
-
-const { testContentSettings } = testListConfig;
 
 class ToggleAutoControl extends PureComponent {
 
@@ -29,6 +27,10 @@ class ToggleAutoControl extends PureComponent {
 
     this.setGetDataTimeOut = null;
     this.getDataInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[props.testId] || { title: '', description: '' };
   }
 
   componentWillUnmount () {
@@ -66,7 +68,7 @@ class ToggleAutoControl extends PureComponent {
     const ctrlPlantLog = _.find(logs, log => log.plantNo === this.props.controlPlantNum);
     return (baseUtils.convertToBinary(ctrlPlantLog.control_result_01_25).split('').pop() === '1');
   }
-  
+
   // call second api
   getData = () => {
     axios.get(`${service.getPLantLogCurrents}`,{ params: {
@@ -145,7 +147,7 @@ class ToggleAutoControl extends PureComponent {
       });
       const { testId, updateTestResult } = this.props;
       updateTestResult({ testId, result: null });
-      
+
       // call first api
       axios.post(`${service.powerControl}`,{
           plantNo: this.props.controlPlantNum,
@@ -175,13 +177,11 @@ class ToggleAutoControl extends PureComponent {
     const {
       testId,
     } = this.props;
-    const testSet = testContentSettings[testId];
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -202,6 +202,7 @@ ToggleAutoControl.propTypes = {
 };
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

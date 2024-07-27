@@ -46,6 +46,9 @@ $borderColor: #ddd;
 .baseDataForm{
   padding: 20px;
   max-width: 815px;
+  select{
+    width: calc( 100% - 180px );
+  }
   .label{
     display: inline-block;
     width: 180px;

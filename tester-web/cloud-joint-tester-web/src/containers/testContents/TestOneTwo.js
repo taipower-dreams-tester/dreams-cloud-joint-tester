@@ -4,37 +4,56 @@ import axios from 'axios';
 import TestContentBase from '../TestContentBase';
 import PLantData from '../PLantData';
 import service from '../../configs/serviceConfig';
-import testListConfig from '../../configs/testListConfig';
+import testListConfigMap from '../../configs/testListConfigMap';
 import baseUtils from "../../utils/base";
 import { updateTestResult } from '../../store/actions/testAction';
 
-const { testItems, testContentSettings } = testListConfig;
-
 const testId = '1-2';
-const testSet = testContentSettings[testId];
-// plant item value shown on page
-const showPlantTestItems = [
-  // 'plantTypeId',
-  'plantNo',
-  'currentPhaseA',
-  'currentPhaseB',
-  'currentPhaseC',
-  'currentPhaseN',
-  'voltagePhaseA',
-  'voltagePhaseB',
-  'voltagePhaseC',
-  'P_SUM',
-  'Q_SUM',
-  'PF_AVG',
-  'frequency',
-  'total_kWh',
-  'PF_setting',
-  'P_setting',
-  'Q_setting',
-  'vpset_setting',
-];
 
-class TestOneOne extends PureComponent {
+// plant item value shown on page
+const showPlantTestItemsMap = {
+  grid: [
+    // 'plantTypeId',
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh",
+    "PF_setting",
+    "P_setting",
+    "Q_setting",
+    "vpset_setting",
+  ],
+  energyStorage: [
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh_discharging",
+    "total_kWh_charging",
+    "status",
+    "SOC",
+    "battery_cycle_count",
+  ],
+};
+
+class TestOneTwo extends PureComponent {
 
   constructor (props) {
     super(props);
@@ -45,6 +64,10 @@ class TestOneOne extends PureComponent {
       isShowLoading: false,
       isShowOutcomeLoading: false,
     };
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
   }
 
   handleToggleLoading = (value) => {
@@ -55,34 +78,24 @@ class TestOneOne extends PureComponent {
     this.setState({ isShowOutcomeLoading: value });
   }
 
-  checHasAllTestItemAndValue = (data) => {
-    let isPass = false;
-    Object.keys(testItems).forEach((item) => {
-      if (!Object.prototype.hasOwnProperty.call(data, item)) return isPass;
-      if (data[item] !== undefined && data[item] !== null) return isPass;
-    });
-    return isPass = true;
-  }
-
   checkIsPass = (datas) => {
-    let isPass = false,
-      hasControllPLant = false,
+    let hasControllPLant = false,
       hasUnControllPlant = false;
     [].forEach.call(datas, (data) => {
       if (data.plantNo === this.props.controlPlantNum) hasControllPLant = true;
       if (data.plantNo === this.props.unControlPlantNum) hasUnControllPlant = true;
-      const checkOutcome = this.checHasAllTestItemAndValue(data);
-      if(!checkOutcome) return isPass;
     });
     // check if has control and uncontrol plant data
     if (hasControllPLant && hasUnControllPlant) {
-      return isPass = true;
+      return true;
     } else {
-      return isPass = false;
+      return false;
     }
   }
 
   handleTestBegin = () => {
+    const showPlantTestItems = showPlantTestItemsMap[this.props.plantCategory];
+
     this.setState({
       isShowOutcomeLoading: true,
       isShowLoading: true,
@@ -110,6 +123,7 @@ class TestOneOne extends PureComponent {
           showPlantTestItems={showPlantTestItems}
           controlPlantNum={this.props.controlPlantNum}
           unControlPlantNum={this.props.unControlPlantNum}
+          config={this.testItems}
         />,
         isShowLoading: false,
       });
@@ -134,10 +148,9 @@ class TestOneOne extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -149,6 +162,7 @@ class TestOneOne extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,
@@ -163,4 +177,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(TestOneOne);
+)(TestOneTwo);

@@ -35,6 +35,7 @@ function createPlant(data) {
     plantName: data.plantName,
     gatewayId: data.gatewayId,
     dnp3Address: data.dnp3Address,
+    plantCategory: data.plantCategory,
   }, { params: {
     access_token: data.accessToken,
   } }).then((res) => res).catch((err) => { console.log('send plant Data err: ', err); });
@@ -57,6 +58,7 @@ function* sendBaseDataFn(action) {
     unControlPlantNum,
     uncontrolPlantName,
     siteToken,
+    plantCategory,
   } = action.payload;
   const errMsgArray = [];
 
@@ -76,6 +78,7 @@ function* sendBaseDataFn(action) {
     plantName: controlPlantName,
     accessToken,
     dnp3Address: 4,
+    plantCategory,
   });
 
   // uncontro plant
@@ -85,13 +88,14 @@ function* sendBaseDataFn(action) {
     plantName: uncontrolPlantName,
     accessToken,
     dnp3Address: 5,
+    plantCategory,
   });
 
   if (!sendUnControlPlantRes || !sendControlPlantRes) {
     errMsgArray.push('案場電號已經存在，請關閉其他測試程式網頁後重試');
     if (gatewayId) {
       yield axios.delete(`${service.deleteGatewayId}/${gatewayId}?access_token=${accessToken}`)
-      .catch((err) => { console.log(err); });
+        .catch((err) => { console.log(err); });
     }
   }
 

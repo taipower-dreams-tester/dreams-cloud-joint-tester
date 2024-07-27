@@ -25,6 +25,9 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <vector>
+#include "dreams.hpp"
+#include "Point.hpp"
 
 namespace dreams {
 
@@ -45,20 +48,22 @@ class DreamsSOEHandler final : public opendnp3::ISOEHandler {
   std::string m_data;
   double m_ctRatio = 1.0;
   double m_ptRatio = 1.0;
+  std::shared_ptr<DreamsPoints> m_dreamsPoints;
 
 public:
   DreamsSOEHandler(std::string gatewayAddress, std::string plantNo, std::string plantName,
-                   double ctRatio, double ptRatio) {
+                   double ctRatio, double ptRatio, std::shared_ptr<DreamsPoints> dreamsPoints) {
     m_gatewayAddress = gatewayAddress;
     m_plantNo = plantNo;
     m_plantName = plantName;
     m_ctRatio = ctRatio == 0 ? 1.0 : ctRatio;
     m_ptRatio = ptRatio == 0 ? 1.0 : ptRatio;
+    m_dreamsPoints = dreamsPoints;
   }
 
   static std::shared_ptr<ISOEHandler> Create(std::string gatewayAddress, std::string plantNo, std::string plantName,
-                                             double ctRatio, double ptRatio) {
-    return std::make_shared<DreamsSOEHandler>(gatewayAddress, plantNo, plantName, ctRatio, ptRatio);
+                                             double ctRatio, double ptRatio, std::shared_ptr<dreams::DreamsPoints> dreamsPoints) {
+    return std::make_shared<DreamsSOEHandler>(gatewayAddress, plantNo, plantName, ctRatio, ptRatio, dreamsPoints);
   }
 
   virtual void Process(const opendnp3::HeaderInfo &info,

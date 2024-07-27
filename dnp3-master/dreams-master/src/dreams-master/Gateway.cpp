@@ -24,7 +24,7 @@ Gateway::Gateway(DNP3Manager *manager, const string address, const uint16_t port
 }
 
 void Gateway::AddMaster(uint16_t remoteAddr, string plantNo, string plantName, double ctRatio,
-                        double ptRatio) {
+                        double ptRatio, std::shared_ptr<DreamsPoints> dreamsPoints) {
   MasterStackConfig stackConfig;
   stackConfig.master.responseTimeout = TimeDuration::Seconds(2);
   stackConfig.master.disableUnsolOnStartup = true;
@@ -32,7 +32,7 @@ void Gateway::AddMaster(uint16_t remoteAddr, string plantNo, string plantName, d
   stackConfig.link.RemoteAddr = remoteAddr;
   auto master = channel->AddMaster(address,                  // id for logging
                                    DreamsSOEHandler::Create( // callback for data processing
-                                       address, plantNo, plantName, ctRatio, ptRatio),
+                                       address, plantNo, plantName, ctRatio, ptRatio, dreamsPoints),
                                    DefaultMasterApplication::Create(), // master application instance
                                    stackConfig                         // stack configuration
   );

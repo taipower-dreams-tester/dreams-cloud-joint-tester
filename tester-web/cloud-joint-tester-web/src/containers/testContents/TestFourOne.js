@@ -6,29 +6,50 @@ import PLantData from '../PLantData';
 import baseUtils from '../../utils/base';
 import service from "../../configs/serviceConfig";
 
-import testListConfig from '../../configs/testListConfig';
+import testListConfigMap from '../../configs/testListConfigMap';
 import { updateTestResult } from '../../store/actions/testAction';
 
-const { testContentSettings } = testListConfig;
 const testId = '4-1';
-const testSet = testContentSettings[testId];
-const showPlantTestItems = [
-  'plantNo',
-  'currentPhaseA',
-  'currentPhaseB',
-  'currentPhaseC',
-  'currentPhaseN',
-  'voltagePhaseA',
-  'voltagePhaseB',
-  'voltagePhaseC',
-  'P_SUM',
-  'Q_SUM',
-  'PF_AVG',
-  'frequency',
-  'total_kWh',
-  'itemTimestamp',
-  'atTimestamp',
-];
+const showPlantTestItemsMap = {
+  grid: [
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh",
+    "itemTimestamp",
+    "atTimestamp",
+  ],
+  energyStorage: [
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh_discharging",
+    "total_kWh_charging",
+    "status",
+    "SOC",
+    "battery_cycle_count",
+    "itemTimestamp",
+    "atTimestamp",
+  ],
+};
 
 class TestFourOne extends PureComponent {
 
@@ -49,6 +70,12 @@ class TestFourOne extends PureComponent {
     this.startDreamsTimeOut = null;
     this.getDataInterval = null;
     this.countDownInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
+
+    this.showPlantTestItems = showPlantTestItemsMap[props.plantCategory];
   }
 
   componentWillUnmount () {
@@ -93,7 +120,7 @@ class TestFourOne extends PureComponent {
     const controlLogs = [];
     const unontrolLogs = [];
     [].forEach.call(logs, (log) => {
-      const isCompleteData = [].every.call(Object.values(log), value => value !== null);
+      const isCompleteData = baseUtils.checkIsCompleteData(this.testItems, log);
       if(isCompleteData && log.plantNo === this.props.controlPlantNum){
         controlLogs.push(log);
       } else if (isCompleteData && log.plantNo === this.props.unControlPlantNum) {
@@ -107,7 +134,7 @@ class TestFourOne extends PureComponent {
       recoverLogs: controlLogs.slice(0, 3).concat(unontrolLogs.slice(0, 3))
     };
   }
-  
+
   // call get log api
   getData = () => {
     axios.get(`${service.getPLantLog}`,{ params: {
@@ -133,7 +160,7 @@ class TestFourOne extends PureComponent {
         this.isGetWantedData = true;
 
         this.setState({
-          otherInfo: 
+          otherInfo:
             <>
               <div className="otherTopInfo">
                 <div className="otherTopInfoRow">離線時間：{offlinePeriod} 分鐘</div>
@@ -143,9 +170,10 @@ class TestFourOne extends PureComponent {
               <PLantData
                 data={recoverLogs}
                 testId={testId}
-                showPlantTestItems={showPlantTestItems}
+                showPlantTestItems={this.showPlantTestItems}
                 controlPlantNum={this.props.controlPlantNum}
                 unControlPlantNum={this.props.unControlPlantNum}
+                config={this.testItems}
               />
             </>,
           isShowOutcomeLoading: false,
@@ -239,7 +267,7 @@ class TestFourOne extends PureComponent {
         otherInfo: null
       });
       this.props.updateTestResult({ testId, result: null });
-  
+
       // call stop dreams server api
       axios.post(`${service.toggleDreamsOffline}`,{
           operation: 'stop',
@@ -268,10 +296,9 @@ class TestFourOne extends PureComponent {
     const { otherInfo, isPass, isShowLoading, isShowOutcomeLoading } = this.state;
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={isPass}
@@ -283,6 +310,7 @@ class TestFourOne extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

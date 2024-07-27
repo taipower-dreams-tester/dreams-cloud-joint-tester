@@ -4,13 +4,12 @@ import axios from 'axios';
 import TestContentBase from '../TestContentBase';
 import PLantData from '../PLantData';
 import service from '../../configs/serviceConfig';
-import testListConfig from '../../configs/testListConfig';
+import testListConfigMap from '../../configs/testListConfigMap';
 import baseUtils from "../../utils/base";
 import { updateTestResult } from '../../store/actions/testAction';
 
-const { testItems, testContentSettings } = testListConfig;
 const testId = '2-2';
-const testSet = testContentSettings[testId];
+
 // plant item value shown on page
 const showPlantTestItems = [
   // 'plantTypeId',
@@ -39,12 +38,16 @@ class TestTwoTwo extends PureComponent {
       isShowLoading: false,
       isShowOutcomeLoading: false,
     };
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
   }
 
   checkIfIsDefaultValue = (data) => {
     let isPass = true;
-    Object.keys(testItems).forEach((item) => {  
-      if (testItems[item].isDeadband && data[item] !== testItems[item].defaultValue) {
+    Object.keys(this.testItems).forEach((item) => {
+      if (this.testItems[item].isDeadband && data[item] !== this.testItems[item].defaultValue) {
         isPass = false;
       };
     });
@@ -52,14 +55,14 @@ class TestTwoTwo extends PureComponent {
   }
 
   checkIsPass = (datas) => {
-    
+
     let isPass = false,
       hasControllPLant = false,
       hasUnControllPlant = false,
       isControllPLantPass = false,
       isUnControllPLantPass = false;
     [].forEach.call(datas, (data) => {
-      let checkOutcome = false;      
+      let checkOutcome = false;
       checkOutcome = this.checkIfIsDefaultValue(data);
       if (data.plantNo === this.props.controlPlantNum) {
         hasControllPLant = true;
@@ -101,21 +104,21 @@ class TestTwoTwo extends PureComponent {
     .then((res) => {
       // add default plant data
       let newData = baseUtils.sortPLant([...res.data], this.props.controlPlantNum, this.props.unControlPlantNum);
-      
+
       [].unshift.call(newData, {
         plantTypeId: '預設值',
         plantNo: '- (預設值)',
-        currentPhaseA_deadband: testItems.currentPhaseA_deadband.defaultValue,
-        currentPhaseB_deadband: testItems.currentPhaseB_deadband.defaultValue,
-        currentPhaseC_deadband: testItems.currentPhaseC_deadband.defaultValue,
-        currentPhaseN_deadband: testItems.currentPhaseN_deadband.defaultValue,
-        voltagePhaseA_deadband: testItems.voltagePhaseA_deadband.defaultValue,
-        voltagePhaseB_deadband: testItems.voltagePhaseB_deadband.defaultValue,
-        voltagePhaseC_deadband: testItems.voltagePhaseC_deadband.defaultValue,
-        P_SUM_deadband: testItems.P_SUM_deadband.defaultValue,
-        Q_SUM_deadband: testItems.Q_SUM_deadband.defaultValue,
-        PF_AVG_deadband: testItems.PF_AVG_deadband.defaultValue,
-        frequency_deadband: testItems.frequency_deadband.defaultValue,
+        currentPhaseA_deadband: this.testItems.currentPhaseA_deadband.defaultValue,
+        currentPhaseB_deadband: this.testItems.currentPhaseB_deadband.defaultValue,
+        currentPhaseC_deadband: this.testItems.currentPhaseC_deadband.defaultValue,
+        currentPhaseN_deadband: this.testItems.currentPhaseN_deadband.defaultValue,
+        voltagePhaseA_deadband: this.testItems.voltagePhaseA_deadband.defaultValue,
+        voltagePhaseB_deadband: this.testItems.voltagePhaseB_deadband.defaultValue,
+        voltagePhaseC_deadband: this.testItems.voltagePhaseC_deadband.defaultValue,
+        P_SUM_deadband: this.testItems.P_SUM_deadband.defaultValue,
+        Q_SUM_deadband: this.testItems.Q_SUM_deadband.defaultValue,
+        PF_AVG_deadband: this.testItems.PF_AVG_deadband.defaultValue,
+        frequency_deadband: this.testItems.frequency_deadband.defaultValue,
       });
 
       // render preshow plant data
@@ -126,6 +129,7 @@ class TestTwoTwo extends PureComponent {
           showPlantTestItems={showPlantTestItems}
           controlPlantNum={this.props.controlPlantNum}
           unControlPlantNum={this.props.unControlPlantNum}
+          config={this.testItems}
         />,
         isShowLoading: false
       });
@@ -151,10 +155,9 @@ class TestTwoTwo extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -166,6 +169,7 @@ class TestTwoTwo extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

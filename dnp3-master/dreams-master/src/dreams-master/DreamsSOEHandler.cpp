@@ -77,10 +77,11 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
 
   vector<PointValue> AI;
   bool updated = false;
-  AI.resize(allPoints.size());
+  auto points = m_dreamsPoints->getPoints();
+  AI.resize(points.size());
 
-  auto print = [&AI, &updated](const Indexed<Analog> &pair) {
-    if (pair.index < allPoints.size()) {
+  auto print = [&AI, &updated, &points](const Indexed<Analog> &pair) {
+    if (pair.index < points.size()) {
       AI[pair.index].value = pair.value.value;
       AI[pair.index].updated = true;
       printf(" [%d]=%g", pair.index, pair.value.value);
@@ -94,18 +95,18 @@ void DreamsSOEHandler::Process(const HeaderInfo &, const ICollection<Indexed<Ana
   if (updated) {
     stringstream post_data;
     post_data.precision(dbl::max_digits10);
-    for (size_t i = 0; i < allPoints.size(); i++) {
+    for (size_t i = 0; i < points.size(); i++) {
       if (AI[i].updated) {
-        cout << allPoints[i]->field << ' ' << fixed << AI[i].value << ' ' << allPoints[i]->ratio << ' ' << m_ctRatio << ' '
+        cout << points[i]->field << ' ' << fixed << AI[i].value << ' ' << points[i]->ratio << ' ' << m_ctRatio << ' '
              << m_ptRatio << endl;
-        auto value = AI[i].value / allPoints[i]->ratio;
-        if (allPoints[i]->ctRatio) {
+        auto value = AI[i].value / points[i]->ratio;
+        if (points[i]->ctRatio) {
           value *= m_ctRatio;
         }
-        if (allPoints[i]->ptRatio) {
+        if (points[i]->ptRatio) {
           value *= m_ptRatio;
         }
-        post_data << ",\"" << allPoints[i]->field << "\":" << value;
+        post_data << ",\"" << points[i]->field << "\":" << value;
       }
     }
 

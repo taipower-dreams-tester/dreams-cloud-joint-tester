@@ -8,7 +8,6 @@ class TestContentBase extends PureComponent {
   render() {
     const {
       isShow,
-      testId,
       title,
       description,
       otherInfo,
@@ -32,7 +31,6 @@ class TestContentBase extends PureComponent {
           <div className="topInfo">
             <div className="baseTestInfo">
               <div className="title">
-                <span>{testId}</span>
                 {title}
               </div>
               <div className="description">{description}</div>
@@ -109,7 +107,6 @@ class TestContentBase extends PureComponent {
 
 TestContentBase.propTypes = {
   isShow: PropTypes.bool.isRequired,
-  testId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   otherInfo: PropTypes.any,

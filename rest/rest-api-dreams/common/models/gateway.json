@@ -15,10 +15,6 @@
       "type": "number",
       "required": true
     },
-    "dnp3Port": {
-      "type": "number",
-      "required": false
-    },
     "apiToken": {
       "type": "string",
       "required": false

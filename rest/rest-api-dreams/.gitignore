@@ -22,3 +22,4 @@ memorydata.json
 package-lock.json
 platformDB.shadow.json
 datasources.development.json
+constant.local.js

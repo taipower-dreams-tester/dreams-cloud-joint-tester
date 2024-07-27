@@ -6,12 +6,10 @@ import PLantData from '../PLantData';
 import baseUtils from '../../utils/base';
 import service from "../../configs/serviceConfig";
 
-import testListConfig from '../../configs/testListConfig'; 
+import testListConfigMap from '../../configs/testListConfigMap';
 import { updateTestResult } from '../../store/actions/testAction';
 
 const testId = '3-8';
-const { testContentSettings } = testListConfig;
-const testSet = testContentSettings[testId];
 const controlField = 'P_SUM_deadband';
 const controlValue = 0.025;
 const controlType = 'P_SUM';
@@ -39,6 +37,10 @@ class TestThreeEight extends PureComponent {
 
     this.setGetDataTimeOut = null;
     this.getDataInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
   }
 
   componentWillUnmount () {
@@ -70,12 +72,12 @@ class TestThreeEight extends PureComponent {
           isPassObj.isValueOk = true;
           isPassObj.isValueOkObj = data;
         }
-        if (isPassObj.isValueOk) return isPassObj; 
+        if (isPassObj.isValueOk) return isPassObj;
       }
     });
     return isPassObj;
   }
-  
+
   // call second api
   getData = () => {
     axios.get(service.getPLantLogCurrents,{ params: {
@@ -91,9 +93,9 @@ class TestThreeEight extends PureComponent {
           this.clearSetGetDataTimeOut();
           this.clearGetDataInterval();
           this.isGetWantedData = true;
-  
+
           this.setState({
-            otherInfo: 
+            otherInfo:
             <>
               {
                 (isCheckPass.isValueOk) ? (<PLantData
@@ -102,6 +104,7 @@ class TestThreeEight extends PureComponent {
                   showPlantTestItems={this.showPlantTestItems}
                   controlPlantNum={this.props.controlPlantNum}
                   unControlPlantNum={this.props.unControlPlantNum}
+                  config={this.testItems}
                 />) : null
               }
             </>,
@@ -155,12 +158,13 @@ class TestThreeEight extends PureComponent {
         otherInfo: null
       });
       this.props.updateTestResult({ testId, result: null });
-  
+
       // call first api
       axios.post(service.deadbandControl,{
           plantNo: this.props.controlPlantNum,
           field: controlType,
           value: controlValue,
+          plantCategory: this.props.plantCategory
         },
         { params: {
           access_token: this.props.token,
@@ -186,10 +190,9 @@ class TestThreeEight extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -201,6 +204,7 @@ class TestThreeEight extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

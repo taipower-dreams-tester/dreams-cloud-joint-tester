@@ -6,20 +6,10 @@ import TestContentBase from '../TestContentBase';
 import PLantData from '../PLantData';
 import baseUtils from '../../utils/base';
 import service from "../../configs/serviceConfig";
-import testListConfig from '../../configs/testListConfig';
+import testListConfigMap from '../../configs/testListConfigMap';
 import { updateTestResult } from '../../store/actions/testAction';
 
-const { testItems, testContentSettings } = testListConfig;
 const testId = '2-3';
-const testSet = testContentSettings[testId];
-
-const customConfig = {
-  startTime: { title: '測試時間' },
-  currentPhaseA: { ...testItems.currentPhaseA },
-  getDataTime: { title: '取得資料時間' },
-};
-
-const showPlantTestItems = Object.keys(customConfig);
 
 class TestTwoThree extends PureComponent {
 
@@ -39,6 +29,18 @@ class TestTwoThree extends PureComponent {
     this.getDataInterval = null;
     this.getDataTimeout = null;
     moment.locale('zh-tw');
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId] || { title: '', description: '' };
+
+    this.config = {
+      startTime: { title: '測試時間' },
+      currentPhaseA: { ...this.testItems.currentPhaseA },
+      getDataTime: { title: '取得資料時間' },
+    };
+
+    this.showPlantTestItems = Object.keys(this.config);
   }
 
   componentWillUnmount () {
@@ -115,10 +117,10 @@ class TestTwoThree extends PureComponent {
           otherInfo: <PLantData
             data={renderDataArray}
             testId={testId}
-            showPlantTestItems={showPlantTestItems}
+            showPlantTestItems={this.showPlantTestItems}
             controlPlantNum={this.props.controlPlantNum}
             unControlPlantNum={this.props.unControlPlantNum}
-            customConfig={customConfig}
+            config={this.config}
           />,
           isShowOutcomeLoading: false,
           isShowLoading: false,
@@ -176,10 +178,9 @@ class TestTwoThree extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -195,6 +196,7 @@ class TestTwoThree extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

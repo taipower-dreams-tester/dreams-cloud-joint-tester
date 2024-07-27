@@ -7,29 +7,50 @@ import PLantData from '../PLantData';
 import service from "../../configs/serviceConfig";
 import _ from 'lodash';
 
-import testListConfig from '../../configs/testListConfig';
+import testListConfigMap from '../../configs/testListConfigMap';
 import { updateTestResult } from '../../store/actions/testAction';
 
-const { testContentSettings, testItems } = testListConfig;
 const testId = '2-4';
-const testSet = testContentSettings[testId];
-const showPlantTestItems = [
-  // 'plantTypeId',
-  'plantNo',
-  'currentPhaseA',
-  'currentPhaseB',
-  'currentPhaseC',
-  'currentPhaseN',
-  'voltagePhaseA',
-  'voltagePhaseB',
-  'voltagePhaseC',
-  'P_SUM',
-  'Q_SUM',
-  'PF_AVG',
-  'frequency',
-  'total_kWh',
-  'itemTimestamp'
-];
+
+const showPlantTestItemsMap = {
+  grid: [
+    // 'plantTypeId',
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh",
+    "itemTimestamp",
+  ],
+  energyStorage: [
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh_discharging",
+    "total_kWh_charging",
+    "status",
+    "SOC",
+    "battery_cycle_count",
+    "itemTimestamp",
+  ],
+};
 
 const getDataTimeOutMin = 16;
 
@@ -54,6 +75,12 @@ class TestTwoFour extends PureComponent {
     this.getDataInterval = null;
     this.getDataTimeout = null;
     this.countDownInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
+
+    this.showPlantTestItems = showPlantTestItemsMap[props.plantCategory];
   }
 
   componentWillUnmount () {
@@ -120,7 +147,7 @@ class TestTwoFour extends PureComponent {
     [].forEach.call(datas, (data) => {
       let isPass = true;
       // check every key's value is not null
-      [].forEach.call(Object.keys(testItems), (key) => {
+      [].forEach.call(Object.keys(this.testItems), (key) => {
         if(data[key] === null) isPass = false;
       });
 
@@ -166,9 +193,10 @@ class TestTwoFour extends PureComponent {
           otherInfo2: <PLantData
             data={wantedDataObj.control.concat(wantedDataObj.unControl)}
             testId={testId}
-            showPlantTestItems={showPlantTestItems}
+            showPlantTestItems={this.showPlantTestItems}
             controlPlantNum={this.props.controlPlantNum}
             unControlPlantNum={this.props.unControlPlantNum}
+            config={this.testItems}
           />,
           isShowOutcomeLoading: false,
           isShowLoading: false,
@@ -231,10 +259,9 @@ class TestTwoFour extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         otherInfo2={this.state.otherInfo2}
         handleTestBegin={this.handleTestBegin}
@@ -251,6 +278,7 @@ class TestTwoFour extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

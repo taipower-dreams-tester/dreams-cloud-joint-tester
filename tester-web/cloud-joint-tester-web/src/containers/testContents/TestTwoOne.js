@@ -6,31 +6,50 @@ import PLantData from '../PLantData';
 import baseUtils from '../../utils/base';
 import service from "../../configs/serviceConfig";
 
-import testListConfig from '../../configs/testListConfig';
+import testListConfigMap from '../../configs/testListConfigMap';
 import { updateTestResult } from '../../store/actions/testAction';
 
-const { testContentSettings } = testListConfig;
 const testId = '2-1';
-const testSet = testContentSettings[testId];
-const showPlantTestItems = [
-  // 'plantTypeId',
-  'plantNo',
-  'currentPhaseA',
-  'currentPhaseB',
-  'currentPhaseC',
-  'currentPhaseN',
-  'voltagePhaseA',
-  'voltagePhaseB',
-  'voltagePhaseC',
-  'P_SUM',
-  'Q_SUM',
-  'PF_AVG',
-  'frequency',
-  'total_kWh'
-];
+
+const showPlantTestItemsMap = {
+  grid: [
+    // 'plantTypeId',
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh",
+  ],
+  energyStorage: [
+    "plantNo",
+    "currentPhaseA",
+    "currentPhaseB",
+    "currentPhaseC",
+    "currentPhaseN",
+    "voltagePhaseA",
+    "voltagePhaseB",
+    "voltagePhaseC",
+    "P_SUM",
+    "Q_SUM",
+    "PF_AVG",
+    "frequency",
+    "total_kWh_discharging",
+    "total_kWh_charging",
+    "status",
+    "SOC",
+    "battery_cycle_count",
+  ],
+};
 
 class TestTwoOne extends PureComponent {
-
   constructor (props) {
     super(props);
     this.state = {
@@ -46,6 +65,13 @@ class TestTwoOne extends PureComponent {
 
     this.setGetDataTimeOut = null;
     this.getDataInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
+    this.fixedValue = this.testContentSettings[testId].fixedValue;
+
+    this.showPlantTestItems = showPlantTestItemsMap[props.plantCategory];
   }
 
   componentWillUnmount () {
@@ -81,7 +107,7 @@ class TestTwoOne extends PureComponent {
     [].forEach.call(datas, (data) => {
       if (data.plantNo === this.props.controlPlantNum) {
         let isPass = false;
-        isPass = baseUtils.checkIsCompleteData(data);
+        isPass = baseUtils.checkIsCompleteData(this.testItems, data);
         if (isPass) completeArray.push(data);
       }
     });
@@ -110,13 +136,18 @@ class TestTwoOne extends PureComponent {
         this.clearGetDataInterval();
         this.isGetCompleteData = true;
 
+        const data = [completeArray.pop()]
+        if (this.fixedValue) {
+          data.push(this.fixedValue);
+        }
         this.setState({
           otherInfo: <PLantData
-            data={[completeArray.pop()]}
+            data={data}
             testId={testId}
-            showPlantTestItems={showPlantTestItems}
+            showPlantTestItems={this.showPlantTestItems}
             controlPlantNum={this.props.controlPlantNum}
             unControlPlantNum={this.props.unControlPlantNum}
+            config={this.testItems}
           />,
           isShowOutcomeLoading: false,
           isShowLoading: false,
@@ -166,7 +197,7 @@ class TestTwoOne extends PureComponent {
         otherInfo: null
       });
       this.props.updateTestResult({ testId, result: null });
-  
+
       // call first api
       axios.post(`${service.sendPolling}`, null, { params: {
         plantNo: this.props.controlPlantNum,
@@ -190,10 +221,9 @@ class TestTwoOne extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -209,6 +239,7 @@ class TestTwoOne extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

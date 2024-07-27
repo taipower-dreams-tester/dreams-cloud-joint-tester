@@ -1,16 +1,3 @@
-// import testListConfig from '../configs/testListConfig';
-
-// const defaultPLantDataObject = {
-//   plantNo: '',
-// };
-// Object.keys(testListConfig.testItems).forEach((item) => {
-//   defaultPLantDataObject[item] = '';
-// });
-
-import testListConfig from '../configs/testListConfig';
-
-const { testItems } = testListConfig;
-
 const baseUtils = (() => (
   {
     setTimestemp: () => {
@@ -39,7 +26,7 @@ const baseUtils = (() => (
       return newSortArray;
     },
     convertToBinary: (data) => (data.toString(2)),
-    checkIsCompleteData: (data) => [].every.call(Object.keys(testItems), (key) => data[key] !== null),
+    checkIsCompleteData: (testItems, data) => [].every.call(Object.keys(testItems), (key) => data[key] !== null),
   }
 ))();
 

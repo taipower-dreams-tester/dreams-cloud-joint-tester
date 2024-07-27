@@ -9,9 +9,7 @@ import baseUtils from '../../../utils/base';
 import service from "../../../configs/serviceConfig";
 import { updateTestResult } from '../../../store/actions/testAction';
 
-import testListConfig from '../../../configs/testListConfig'; 
-
-const { testContentSettings } = testListConfig;
+import testListConfigMap from '../../../configs/testListConfigMap';
 
 class ControlTest extends PureComponent {
 
@@ -46,6 +44,10 @@ class ControlTest extends PureComponent {
 
     this.setGetDataTimeOut = null;
     this.getDataInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[props.testId] || { title: '', description: '' };
   }
 
   componentWillUnmount () {
@@ -71,6 +73,7 @@ class ControlTest extends PureComponent {
           showPlantTestItems={this.showPlantTestItems}
           controlPlantNum={this.props.controlPlantNum}
           unControlPlantNum={this.props.unControlPlantNum}
+          config={this.testItems}
         />;
       }
       return newState;
@@ -122,7 +125,7 @@ class ControlTest extends PureComponent {
     });
     return result;
   }
-  
+
   // call second api
   getData = () => {
     const filter = {
@@ -144,9 +147,9 @@ class ControlTest extends PureComponent {
             this.clearGetDataInterval();
             this.isGetWantedData = true;
           }
-  
+
           this.setState({
-            otherInfo: 
+            otherInfo:
               <>
                 {
                   <div className="isSetOk">收到變流器成功回報</div>
@@ -158,6 +161,7 @@ class ControlTest extends PureComponent {
                     showPlantTestItems={this.showPlantTestItems}
                     controlPlantNum={this.props.controlPlantNum}
                     unControlPlantNum={this.props.unControlPlantNum}
+                    config={this.testItems}
                   />
                 }
               </>,
@@ -178,6 +182,7 @@ class ControlTest extends PureComponent {
                 showPlantTestItems={this.showPlantTestItems}
                 controlPlantNum={this.props.controlPlantNum}
                 unControlPlantNum={this.props.unControlPlantNum}
+                config={this.testItems}
               />
             </>),
             isShowManualJudgment: this.props.isManualJudgment ? true : false,
@@ -229,7 +234,7 @@ class ControlTest extends PureComponent {
       });
       const { testId, updateTestResult } = this.props;
       updateTestResult({ testId, result: null });
-  
+
       // call first api
       axios.post(service.powerControl,{
           plantNo: this.props.controlPlantNum,
@@ -260,13 +265,11 @@ class ControlTest extends PureComponent {
       testId,
       isManualJudgment,
     } = this.props;
-    const testSet = testContentSettings[testId];
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -298,6 +301,7 @@ ControlTest.defaultProps = {
 };
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,
