@@ -124,26 +124,34 @@ module.exports = function(Plant) {
       {arg: 'plantNo', type: 'string', required: true, description: 'Plant Number'},
       {arg: 'field', type: 'string', required: true, description: 'The field name without _deadband'},
       {arg: 'value', type: 'number', required: true, description: 'The deadband threshold, ex: set 0.025 for 2.5%'},
+      {arg: 'plantCategory', type: 'string', required: true, description: 'grid or energyStorage'},
     ],
     returns: {arg: 'data', type: 'object'},
   });
 
-  Plant.setDeadband = async function(plantNo, field, value) {
-    const point_mapping = {
-      currentPhaseA: 5,
-      currentPhaseB: 6,
-      currentPhaseC: 7,
-      currentPhaseN: 8,
-      voltagePhaseA: 9,
-      voltagePhaseB: 10,
-      voltagePhaseC: 11,
-      P_SUM: 12,
-      Q_SUM: 13,
-      PF_AVG: 14,
-      frequency: 15,
-      irradiance: 16,
-      wind_speed: 17,
+  Plant.setDeadband = async function(plantNo, field, value, plantCategory) {
+    const point_mapping_map = {
+      grid: {
+        currentPhaseA: 5,
+        currentPhaseB: 6,
+        currentPhaseC: 7,
+        currentPhaseN: 8,
+        voltagePhaseA: 9,
+        voltagePhaseB: 10,
+        voltagePhaseC: 11,
+        P_SUM: 12,
+        Q_SUM: 13,
+        PF_AVG: 14,
+        frequency: 15,
+        irradiance: 16,
+        wind_speed: 17,
+      },
+      energyStorage: {
+        P_SUM: 7,
+      }
     }
+    const point_mapping = point_mapping_map[plantCategory];
+
     if (!(field in point_mapping)) {
       throw { statusCode: 400, message: `The specified field is not supported ${field}`};
     }

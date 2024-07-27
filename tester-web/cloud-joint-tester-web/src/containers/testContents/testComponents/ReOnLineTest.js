@@ -8,10 +8,50 @@ import PLantData from '../../PLantData';
 import baseUtils from '../../../utils/base';
 import service from "../../../configs/serviceConfig";
 
-import testListConfig from '../../../configs/testListConfig';
+import testListConfigMap from '../../../configs/testListConfigMap';
 import { updateTestResult } from '../../../store/actions/testAction';
 
-const { testItems, testContentSettings } = testListConfig;
+const showPlantTestItemsMap = {
+  grid: [
+    // 'plantTypeId',
+    'plantNo',
+    'currentPhaseA',
+    'currentPhaseB',
+    'currentPhaseC',
+    'currentPhaseN',
+    'voltagePhaseA',
+    'voltagePhaseB',
+    'voltagePhaseC',
+    'P_SUM',
+    'Q_SUM',
+    'PF_AVG',
+    'frequency',
+    'total_kWh',
+    'itemTimestamp',
+    'atTimestamp',
+  ],
+  energyStorage: [
+    'plantNo',
+    'currentPhaseA',
+    'currentPhaseB',
+    'currentPhaseC',
+    'currentPhaseN',
+    'voltagePhaseA',
+    'voltagePhaseB',
+    'voltagePhaseC',
+    'P_SUM',
+    'Q_SUM',
+    'PF_AVG',
+    'frequency',
+    "total_kWh_discharging",
+    "total_kWh_charging",
+    "status",
+    "SOC",
+    "battery_cycle_count",
+    'itemTimestamp',
+    'atTimestamp',
+  ],
+};
 
 class ReOnLineTest extends PureComponent {
 
@@ -26,30 +66,17 @@ class ReOnLineTest extends PureComponent {
       getLogData: [],
     };
 
-    this.showPlantTestItems = props.showOtherInfoKeys || [
-      // 'plantTypeId',
-      'plantNo',
-      'currentPhaseA',
-      'currentPhaseB',
-      'currentPhaseC',
-      'currentPhaseN',
-      'voltagePhaseA',
-      'voltagePhaseB',
-      'voltagePhaseC',
-      'P_SUM',
-      'Q_SUM',
-      'PF_AVG',
-      'frequency',
-      'total_kWh',
-      'itemTimestamp',
-      'atTimestamp',
-    ];
+    this.showPlantTestItems = props.showOtherInfoKeys || showPlantTestItemsMap[this.props.plantCategory];
 
     this.startTimeStemp = null;
     this.isGetWantedData = false;
 
     this.setGetDataTimeOut = null;
     this.getDataInterval = null;
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[props.testId];
   }
 
   componentWillUnmount () {
@@ -76,6 +103,7 @@ class ReOnLineTest extends PureComponent {
         showPlantTestItems={this.showPlantTestItems}
         controlPlantNum={this.props.controlPlantNum}
         unControlPlantNum={this.props.unControlPlantNum}
+        config={this.testItems}
       />;
       }
       return newState;
@@ -112,7 +140,7 @@ class ReOnLineTest extends PureComponent {
     const unControlPlantArray = [];
     [].forEach.call(datas, (data) => {
       let isDataComplete = false;
-      isDataComplete = [].every.call(Object.keys(testItems), (item) => (data[item] !== null));
+      isDataComplete = [].every.call(Object.keys(this.testItems), (item) => (data[item] !== null));
       if (isDataComplete && data.plantNo === this.props.controlPlantNum) controlPlantArray.push(data);
       if (isDataComplete && data.plantNo === this.props.unControlPlantNum) unControlPlantArray.push(data);
     });
@@ -123,7 +151,7 @@ class ReOnLineTest extends PureComponent {
     returnArray = lastControlPLantData.concat(lastUnControlPLantData);
     return returnArray;
   }
-  
+
   // call second api
   getData = () => {
     let filter = _.merge(
@@ -160,6 +188,7 @@ class ReOnLineTest extends PureComponent {
               showPlantTestItems={this.showPlantTestItems}
               controlPlantNum={this.props.controlPlantNum}
               unControlPlantNum={this.props.unControlPlantNum}
+              config={this.testItems}
             /></>,
             isShowOutcomeLoading: false,
             isShowLoading: false,
@@ -221,7 +250,7 @@ class ReOnLineTest extends PureComponent {
         otherInfo: null
       });
       updateTestResult({ testId, result: null });
-  
+
       const timestemp = baseUtils.setTimestemp();
       this.startTimeStemp = timestemp.sec;
       this.setGetDataTimeOutFn();
@@ -233,13 +262,11 @@ class ReOnLineTest extends PureComponent {
       testId,
       isManualJudgment,
     } = this.props;
-    const testSet = testContentSettings[testId];
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description}
+        title={this.testSet.title}
+        description={this.testSet.description}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -268,6 +295,7 @@ ReOnLineTest.defaultProps = {
 };
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.activeTestTag,
   controlPlantNum: testReducer.controlPlantNum,

@@ -48,6 +48,11 @@
       "type": "number",
       "required": true,
       "default": 2.0
+    },
+    "plantCategory": {
+      "type": "string",
+      "length": 32,
+      "required": false
     }
   },
   "validations": [],

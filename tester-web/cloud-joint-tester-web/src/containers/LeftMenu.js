@@ -4,8 +4,7 @@ import {
   updateActiveTestTag
 } from '../store/actions/testAction';
 
-import testListConfig from '../configs/testListConfig';
-const { leftMenu, testContentSettings } = testListConfig;
+import testListConfigMap from '../configs/testListConfigMap';
 
 class LeftMenu extends PureComponent {
 
@@ -25,7 +24,7 @@ class LeftMenu extends PureComponent {
     }
   }
 
-  renderSubNav = (subItems, handleSubNavClick, activeTestTag) => (
+  renderSubNav = (testContentSettings, subItems, handleSubNavClick, activeTestTag) => (
     subItems.map((subItemId) => (
       <li className={[
             'navSubitem',
@@ -37,24 +36,29 @@ class LeftMenu extends PureComponent {
           id={subItemId}
           onClick={() => handleSubNavClick(subItemId)}
         >
-            <span>{subItemId}</span>{testContentSettings[subItemId].title}
+            <span>{testContentSettings[subItemId].id}</span>{testContentSettings[subItemId].title}
         </button>
       </li>
     ))
   )
 
-  renderNav = (handleSubNavClick, activeTestTag) => (
+  renderNav = (leftMenu, testContentSettings, handleSubNavClick, activeTestTag) => (
     leftMenu.map((group) => (
       <ul className="navGroupWrap" key={`navGroup_${group.groupId}`}>
-        {this.renderSubNav(group.subItems, handleSubNavClick, activeTestTag)}
+        {this.renderSubNav(testContentSettings, group.subItems, handleSubNavClick, activeTestTag)}
       </ul>
     ))
   )
 
   render () {
+    const leftMenu = testListConfigMap[this.props.plantCategory].leftMenu;
+    const testContentSettings = testListConfigMap[this.props.plantCategory].testContentSettings;
+
     return (
       <div className="leftMenuWrap">
         {this.renderNav(
+          leftMenu,
+          testContentSettings,
           this.handleTestTagClick,
           this.props.activeTestTag
           )}
@@ -64,6 +68,7 @@ class LeftMenu extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   testResults: testReducer.testResults,
 });

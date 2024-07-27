@@ -10,24 +10,26 @@ import {
   UPDATE_TEST_RESULT,
 } from '../actions/actionType';
 import { accessToken } from '../../configs/apiConfig';
+import constants from '../../constants';
 
 const controlPlantNum = baseDataConfig.controlPlantData.num;
 const unControlPlantNum = '88-88-8888-88-8';
 
 const initState = {
+  plantCategory: constants.PlantCategoryType.grid,
   ip: '',
   ipError: '',
   port: '20000',
   portError: '',
 
   controlPlantNum,
-  controlPlantNumArray: controlPlantNum.split('-'), 
+  controlPlantNumArray: controlPlantNum.split('-'),
   controlPlantNumError: '',
   controlPlantName: baseDataConfig.controlPlantData.name,
   controlPlantNameError: '',
 
   unControlPlantNum,
-  unControlPlantNumArray: unControlPlantNum.split('-'), 
+  unControlPlantNumArray: unControlPlantNum.split('-'),
   unControlPlantNumError: '',
   unControlPlantName: 'test uncontrol plant',
   unControlPlantNameError: '',

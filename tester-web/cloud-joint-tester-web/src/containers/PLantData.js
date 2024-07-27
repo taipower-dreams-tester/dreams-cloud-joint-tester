@@ -3,9 +3,6 @@ import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
-import testListConfig from '../configs/testListConfig';
-
-const { testItems } = testListConfig;
 const noDataKey = 'noData';
 
 const renderPlantItem = (plant, showPlantTestItems, testId, config, controlPlantNum, unControlPlantNum) => (
@@ -57,8 +54,7 @@ const renderNoPlantData = (plant, showPlantTestItems, testId, config) => (
 );
 
 const PLantData = (props) => {
-  const { data, customConfig } = props;
-  const config = customConfig || testItems;
+  const { data, config } = props;
   return (
     <div className="plantDataWrap">
       {
@@ -96,11 +92,10 @@ PLantData.propTypes = {
   showPlantTestItems: PropTypes.array.isRequired,
   controlPlantNum: PropTypes.string.isRequired,
   unControlPlantNum: PropTypes.string.isRequired,
-  customConfig: PropTypes.object,
+  config: PropTypes.object.isRequired,
 };
 
 PLantData.defaultProps = {
-  customConfig: null,
 };
 
 export default PLantData;

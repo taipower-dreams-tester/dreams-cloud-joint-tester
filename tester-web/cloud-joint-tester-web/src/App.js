@@ -47,8 +47,8 @@ class App extends Component {
 
     const checkCB = () => {
       return { isValidate, errorText};
-    }  
-    
+    }
+
     if (checkSet) {
       if (checkSet.required && getValue === '') {
         errorText = emptyErrorText;
@@ -91,7 +91,7 @@ class App extends Component {
       name = target.name,
       value = target.value,
       checkValidateOutcome = this.checkValidate(target.name, target.value);
-    
+
     if (checkValidateOutcome.isValidate) {
       this.props.updateBaseData({
         [name]: value,
@@ -139,7 +139,7 @@ class App extends Component {
 
     const checkValues = this.checkAllValidate(fieldsCheckList);
     const isCheckValueValidate = [].every.call(checkValues, (value) => value );
-    
+
     if (isCheckValueValidate) {
         this.setState({ infoText: '' });
         // 打 set 基本資料的 API
@@ -151,6 +151,7 @@ class App extends Component {
           unControlPlantNum: this.props.unControlPlantNum,
           uncontrolPlantName: this.props.unControlPlantName,
           siteToken: this.props.siteToken,
+          plantCategory: this.props.plantCategory,
         })
       } else {
         this.setState({ infoText: '請將上方資訊填寫完整' });
@@ -167,6 +168,7 @@ class App extends Component {
               handlePlantInputChange={this.handlePlantInputChange}
               handleStartTest={this.handleStartTest}
               infoText={this.state.infoText}
+              plantCategory={this.props.plantCategory}
 
               ipError={this.props.ipError || ''}
               portError={this.props.portError || ''}
@@ -198,6 +200,8 @@ class App extends Component {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
+
   ip: testReducer.ip,
   ipError: testReducer.ipError,
   port: testReducer.port,

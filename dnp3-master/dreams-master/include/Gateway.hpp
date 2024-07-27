@@ -4,6 +4,7 @@
 #include <asiodnp3/DNP3Manager.h>
 #include <map>
 #include <string>
+#include "dreams.hpp"
 
 #define MASTER_LOCAL_ADDR 3
 
@@ -21,7 +22,7 @@ class Gateway {
 public:
   Gateway(DNP3Manager *manager, const string address, const uint16_t port);
   void AddMaster(uint16_t remoteAddr, string plantNo, string plantName, double ctRatio,
-                 double ptRatio);
+                 double ptRatio, shared_ptr<DreamsPoints> dreamsPoints);
 
   const string address;
   const uint16_t port;

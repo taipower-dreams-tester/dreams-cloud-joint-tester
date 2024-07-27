@@ -4,11 +4,10 @@ import axios from 'axios';
 import TestContentBase from '../TestContentBase';
 import service from '../../configs/serviceConfig';
 
-import testListConfig from '../../configs/testListConfig'; 
+import testListConfigMap from '../../configs/testListConfigMap';
 import { updateTestResult } from '../../store/actions/testAction';
 
 const testId = '1-1';
-const testSet = testListConfig.testContentSettings[testId];
 
 class TestOneOne extends PureComponent {
 
@@ -21,6 +20,10 @@ class TestOneOne extends PureComponent {
       isShowLoading: false,
       isShowOutcomeLoading: false,
     };
+
+    this.testItems = testListConfigMap[props.plantCategory].testItems;
+    this.testContentSettings = testListConfigMap[props.plantCategory].testContentSettings;
+    this.testSet = this.testContentSettings[testId];
   }
 
   handleToggleLoading = (value) => {
@@ -66,10 +69,9 @@ class TestOneOne extends PureComponent {
   render () {
     return (
       <TestContentBase
-        testId={testId}
         isShow={this.props.activeTestTag === testId}
-        title={testSet.title}
-        description={testSet.description.replace('{ip}', this.props.ip)}
+        title={this.testSet.title}
+        description={this.testSet.description.replace('{ip}', this.props.ip)}
         otherInfo={this.state.otherInfo}
         handleTestBegin={this.handleTestBegin}
         isPass={this.state.isPass}
@@ -81,6 +83,7 @@ class TestOneOne extends PureComponent {
 }
 
 const mapStateToProps = ({ testReducer  }) => ({
+  plantCategory: testReducer.plantCategory,
   activeTestTag: testReducer.activeTestTag,
   ip: testReducer.ip,
   controlPlantNum: testReducer.controlPlantNum,

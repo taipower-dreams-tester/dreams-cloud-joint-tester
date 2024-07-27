@@ -88,6 +88,15 @@ services:
     volumes:
       - mq-config:/config:ro
     restart: unless-stopped
+  fake-modbus-server:
+    container_name: fake-modbus-server
+    build: ./fake-modbus-slave
+    ports:
+      - "502:502/tcp"
+    restart: unless-stopped
+    volumes:
+      - ./fake-modbus-slave/data:/fake-modbus-slave/data/:ro
+      - ./fake-modbus-slave/config.json:/fake-modbus-slave/config.json:ro
 volumes:
   mq:
   mq-config:

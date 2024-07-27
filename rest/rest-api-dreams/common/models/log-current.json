@@ -223,6 +223,26 @@
       "type": "number",
       "required": true,
       "index": true
+    },
+    "total_kWh_discharging": {
+      "type": "number",
+      "required": false
+    },
+    "total_kWh_charging": {
+      "type": "number",
+      "required": false
+    },
+    "status": {
+      "type": "number",
+      "required": false
+    },
+    "SOC": {
+      "type": "number",
+      "required": false
+    },
+    "battery_cycle_count": {
+      "type": "number",
+      "required": false
     }
   },
   "validations": [],

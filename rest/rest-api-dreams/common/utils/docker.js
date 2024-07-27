@@ -6,26 +6,30 @@ const { getContainerIdMatchPattern } = require('../../server/constant');
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 const readFilePromise = promisify(readFile);
 
-/* $ cat /proc/self/cgroup
-13:rdma:/
-12:pids:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-11:hugetlb:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-10:net_prio:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-9:perf_event:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-8:net_cls:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-7:freezer:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-6:devices:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-5:memory:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-4:blkio:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-3:cpuacct:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-2:cpu:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-1:cpuset:/docker/8b4faee59bb91b1f4e78f33f6e03b39ccf0bf3c154de4180e08db4ef8240a9b8
-0::/
+/*
+$ cat /proc/self/mountinfo
+
+...
+1019 1015 0:146 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw
+1020 1015 0:161 / /dev/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k
+1021 1013 0:35 /docker/volumes/dreams-cloud-joint-tester_loopback_storage/_data /storage rw,noatime master:57 - btrfs /dev/vdb1 rw,nodatasum,nodatacow,ssd,discard,space_cache=v2,subvolid=5,subvol=/
+1024 1013 0:35 /docker/containers/b440d6f0687511d7fd6e6b581d01e03ad6d94403e41d6d6e922917377132265f/resolv.conf /etc/resolv.conf rw,noatime - btrfs /dev/vdb1 rw,nodatasum,nodatacow,ssd,discard,space_cache=v2,subvolid=5,subvol=/
+1025 1013 0:35 /docker/containers/b440d6f0687511d7fd6e6b581d01e03ad6d94403e41d6d6e922917377132265f/hostname /etc/hostname rw,noatime - btrfs /dev/vdb1 rw,nodatasum,nodatacow,ssd,discard,space_cache=v2,subvolid=5,subvol=/
+1026 1013 0:35 /docker/containers/b440d6f0687511d7fd6e6b581d01e03ad6d94403e41d6d6e922917377132265f/hosts /etc/hosts rw,noatime - btrfs /dev/vdb1 rw,nodatasum,nodatacow,ssd,discard,space_cache=v2,subvolid=5,subvol=/
+1027 1013 0:47 /docker.sock /run/docker.sock rw,nosuid,nodev,relatime - tmpfs none rw,mode=755
+733 1014 0:147 /bus /proc/bus ro,nosuid,nodev,noexec,relatime - proc proc rw
+...
 */
 async function getMyId() {
-  const data = await readFilePromise('/proc/self/cgroup', { encoding: 'ascii' });
-  const [, id] = data.split('\n').filter(line => line.includes('docker'))[0].match(getContainerIdMatchPattern());
-  return id;
+  const data = await readFilePromise('/proc/self/mountinfo', { encoding: 'ascii' });
+  const lines = data.split('\n');
+  for (let line of lines) {
+    const matches = line.match(/\/docker\/containers\/(.+?)\//);
+    if (matches) {
+      return matches[1];
+    }
+  }
+  throw new Error('Could not find container id');
 }
 
 async function getContainerById(id) {

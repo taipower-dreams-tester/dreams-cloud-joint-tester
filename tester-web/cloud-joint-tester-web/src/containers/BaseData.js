@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import axios from 'axios';
 import service from "../configs/serviceConfig";
+import constants from '../constants';
 
 import loadImg from '../images/loading.gif';
 
@@ -144,6 +145,21 @@ class BaseDataForm extends PureComponent {
     return (
       <div>
         <form className="baseDataForm">
+          <div className="form-group">
+            <span className="label">驗測類型: </span>
+            <select
+              className="form-control"
+              name="plantCategory"
+              onChange={handleInputChange}
+              defaultValue={this.props.plantCategory}
+            >
+              {
+                constants.PlantCategories.map((plantCategory) => (
+                  <option key={plantCategory.key} value={plantCategory.key}>{plantCategory.name}</option>
+                ))
+              }
+            </select>
+          </div>
           <div className={classnames(
             'form-group',
             { error: ipError },
@@ -308,6 +324,7 @@ BaseDataForm.propTypes = {
   controlPlantNumArray: PropTypes.array.isRequired,
   unControlPlantNumArray: PropTypes.array.isRequired,
 
+  plantCategory: PropTypes.string.isRequired,
   ip: PropTypes.string.isRequired,
   port: PropTypes.string.isRequired,
   controlPlantName: PropTypes.string.isRequired,

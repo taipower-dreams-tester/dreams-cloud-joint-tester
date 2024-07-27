@@ -25,6 +25,7 @@
 #include "Gateway.hpp"
 #include "MesgBuffer.hpp"
 #include "Plant.hpp"
+#include "dreams.hpp"
 #include "utils.hpp"
 #include <asiodnp3/ConsoleLogger.h>
 #include <asiodnp3/DNP3Manager.h>
@@ -120,8 +121,9 @@ int main(int, char **) {
       assert(document[i].IsObject());
       std::string plantNo = json_get(document[i], "plantNo", "");
       std::string plantName = json_get(document[i], "plantName", "");
+      std::string plantCategory = json_get(document[i], "plantCategory", "");
       std::string gatewayAddress = json_get(document[i], "gateway.ipAddress", "");
-      uint16_t gatewayPort = json_get(document[i], "gateway.dnp3Port", 20000);
+      uint16_t gatewayPort = json_get(document[i], "gateway.port", 20000);
       double ctRatio = json_get(document[i], "gateway.powerMeterCTRatio", 1.0);
       double ptRatio = json_get(document[i], "gateway.powerMeterPTRatio", 1.0);
       uint16_t remoteAddr = json_get(document[i], "dnp3Address", 4);
@@ -132,7 +134,15 @@ int main(int, char **) {
         gateways[gatewayAddress] = gateway;
       }
 
-      gateways[gatewayAddress]->AddMaster(remoteAddr, plantNo, plantName, ctRatio, ptRatio);
+      if (plantCategory == "energyStorage") {
+        std::shared_ptr<DreamsPoints> essDreamsPoints = std::make_shared<DreamsEnergyStoragePoints>();
+        gateways[gatewayAddress]->AddMaster(remoteAddr, plantNo, plantName, ctRatio, ptRatio, essDreamsPoints);
+      }
+      else {
+        std::shared_ptr<DreamsPoints> gridDreamsPoints = std::make_shared<DreamsGridPoints>();
+        gateways[gatewayAddress]->AddMaster(remoteAddr, plantNo, plantName, ctRatio, ptRatio, gridDreamsPoints);
+      }
+
       cout << "Gateway added for plant: " << plantNo << ", " << plantName << ", " << gatewayAddress << ", " << gatewayPort << ", " <<
         ctRatio << ", " << ptRatio << ", " << remoteAddr << endl;
     }
@@ -206,6 +216,7 @@ string construct_url() {
   fields.PushBack("plantName", allocator);
   fields.PushBack("gatewayId", allocator);
   fields.PushBack("dnp3Address", allocator);
+  fields.PushBack("plantCategory", allocator);
 
   Value include;
   include.SetObject();
@@ -217,7 +228,6 @@ string construct_url() {
   scope_fields.SetArray();
   scope_fields.PushBack("ipAddress", allocator);
   scope_fields.PushBack("port", allocator);
-  scope_fields.PushBack("dnp3Port", allocator);
   scope_fields.PushBack("powerMeterCTRatio", allocator);
   scope_fields.PushBack("powerMeterPTRatio", allocator);
   scope.AddMember("fields", scope_fields, allocator);
