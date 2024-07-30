@@ -79,7 +79,29 @@ CONTAINER ID   IMAGE                                          COMMAND           
 421bddc6ef5e   dreams-cloud-joint-tester-fake-modbus-server   "python -m fake_slave"   About a minute ago   Up About a minute   0.0.0.0:502->502/tcp, :::502->502/tcp   fake-modbus-server
 ```
 
-2. 驗證連線
+2. EMS 模擬器 Modbus Register 欄位
+
+| Address | Type    | Description | R/W | Data Type | Unit   | Note |
+|---------|---------|-------------|-----|-----------|--------|------|
+| 21      | holding | Line Current PhaseA A相線電流 | R   | int32    | 0.1A   | 電表數值 |
+| 23      | holding | Line Current PhaseB B相線電流 | R   | int32    | 0.1A   | 電表數值 |
+| 25      | holding | Line Current PhaseC C相線電流 | R   | int32    | 0.1A   | 電表數值 |
+| 27      | holding | Line Current PhaseN N相線電流 | R   | int32    | 0.1A   | 電表數值 |
+| 29      | holding | Line Voltage Phase AB AB線電壓  | R   | uint32   | 0.01V  | 電表數值 併聯點電壓 (kV) 因電壓在高壓側 建議單位改為1V |
+| 31      | holding | Line Voltage Phase BC BC線電壓 | R   | uint32   | 0.01V  | 電表數值 因電壓在高壓側 建議單位改為1V |
+| 33      | holding | Line Voltage Phase AC AC線電壓  | R   | uint32   | 0.01V  | 電表數值 因電壓在高壓側 建議單位改為1V |
+| 35      | holding | 實功 | R   | int32    | kW     | 電表數值 放電時為正值 |
+| 37      | holding | 虛功 | R   | int32    | kVar   | 電表數值 |
+| 39      | holding | 功率因數 | R   | int16    | %      | 並聯點 |
+| 40      | holding | 頻率 | R   | uint16   | 0.1Hz  | 電表數值 |
+| 41      | holding | 累積放電量 | R   | uint32   | kWh    | 電表數值 |
+| 43      | holding | 累積充電量 | R   | uint32   | kWh    | 電表數值 |
+| 45      | holding | 儲能系統狀態 | R   | uint16   |        | 0: stand by 1: charging 2. discharging 3. error |
+| 46      | holding | 儲能系統電量(SOC) | R   | uint16   | kWh    | 儲能系統數值 |
+| 47      | holding | 儲能系統循環使用次數(battery cycle count） | R   | uint16   |        | 儲能系統數值 |
+| 48      | holding | 時間戳 | R   | uint32   | unix time |       |
+
+3. 驗證連線
 可以使用 `modbus_tcp_reader.py` 腳本來驗證連線並獲取所需的數據。
 
 需要安裝相關 Python 模組
